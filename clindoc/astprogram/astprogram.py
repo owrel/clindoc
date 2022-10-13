@@ -8,6 +8,7 @@ class ASTProgram:
         self.astnodes: List[ASTNode] = []
         self._rawast: List[AST] = []
         self._path = path
+        
 
         with open(path) as f:
             self.file = f.readlines()
@@ -21,3 +22,5 @@ class ASTProgram:
     def __call__(self, ast: AST) -> None:
         self.astnodes.append(ASTNode(ast, self.file))
         self._rawast.append(ast)
+
+

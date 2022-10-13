@@ -23,7 +23,7 @@ subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y).
 
 
 %- translation
-sudoku(X,Y,V) :- initial(X,Y,V).
+sudoku(X,Y,V) :- instance(X,Y,V).
 
 
 #show sudoku(X,Y,V):sudoku(X,Y,V),V=9. 
