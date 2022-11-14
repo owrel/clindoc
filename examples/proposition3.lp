@@ -1,10 +1,12 @@
 %*
-@desc Sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represetn a value of cell at a given position. The solver will always return a solution if a solution exist
 
+@title SUDOKU 
+
+@description 
+    Sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represetn a value of cell at a given position. The solver will always return a solution if a solution exist
 
 @example
-    instance(1,1,1), instance(2,2,2) ...
-    sudoku(1,1,1), sudoku(2,2,2) ...
+    instance(1,1,1). instance(2,2,2).
 
 @usage
     clingo sudoku.lp [instance] [-c dim=3]
@@ -23,12 +25,11 @@
 *%
 
 
-
 %*
 @input instance(X,Y,V) -> input predicate trepresenting the value of a cell at a given position, "the cell at position (X,Y) has an initial value of V
-    @arg X ->  x position of the cell
-    @arg Y ->  y position of the cell
-    @arg V ->  value of the cell
+@param X ->  x position of the cell
+@param Y ->  y position of the cell
+@param V ->  value of the cell
 *%
 #defined instance/3.
 %*
@@ -53,8 +54,8 @@ sudoku(X,Y,V) :- initial(X,Y,V).
 
 %*
 @output sudoku(X,Y,V) -> predicate representing the value of a cell at a given position
-    @arg X ->  x position of the cell
-    @arg Y ->  y position of the cell
-    @arg V ->  value of the cell
+    @param X ->  x position of the cell
+    @param Y ->  y position of the cell
+    @param V ->  value of the cell
 *%
-#show sudoku(X,Y,V):sudoku(X,Y,V),V=9. 
+#show sudoku(X,Y,V):sudoku(X,Y,V). 

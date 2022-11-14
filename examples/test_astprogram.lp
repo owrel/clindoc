@@ -2,8 +2,7 @@
 #defined instance/3.
 
 %--- The dimension of the Sudoku: `dim*dim x dim*dim grid
-#const dim = 3. 
-
+#const dim = 2. 
 val(1..dim*dim).
 pos(X,Y) :- val(X), val(Y).
 
@@ -17,14 +16,11 @@ subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y).
 :- sudoku(X,Y,V), sudoku(X',Y,V), X != X'.
 %- Can't repeat values per column
 :- sudoku(X,Y,V), sudoku(X,Y',V), Y != Y'.
-
 %- Can't repeat values per subgrid
 :- sudoku(X,Y,V), sudoku(X',Y',V), subgrid(X,Y,S), subgrid(X',Y',S), (X,Y)!=(X',Y').
-
 
 %- translation
 sudoku(X,Y,V) :- instance(X,Y,V).
 
-
-#show sudoku(X,Y,V):sudoku(X,Y,V),V=9. 
-#show val/1.
+#show sudoku(X,Y,V):sudoku(X,Y,V). 
+% #show val/1.

@@ -1,4 +1,4 @@
 
 from .contributordoc import *
-from .dependencygraph import *
+from .definitiondependencygraph import *
 from .clindoc import *

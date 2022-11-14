@@ -8,26 +8,29 @@ class ASTNode:
 
         self.type = ast.ast_type
         self.ast = ast
-        self.comments = fetchcomments(self.ast, file)
+        self.comments = fetch_comments(self.ast, file)
         self._child_keys_separation = get_child_keys_separation(ast)
         self._raw = f"{ast}"
         
         # contraint
-        if self.type == ASTType.Rule and "head" in self._child_keys_separation:
-            if not self._child_keys_separation['head']:
-                self._constraint = True
-        else :
-            self._constraint = False        
+    def isconstraint(self):
+        print(self.get_pool())
+        for sym in  self.get_pool():
+            if isinstance(sym,SymbolConstraint):
+                return True
+        return False
+
+    def get_pool(self):
+        ret = []
+        for key in self._child_keys_separation:
+            for sym in self._child_keys_separation[key]:
+                ret.append(sym)
+        return ret
 
 
-
-# # #                    # # #
-# Inner classes, methods ... #
-# # #                    # # #
-
-
-
-
+            # # #                    # # #
+            # Inner classes, methods ... #
+            # # #                    # # #
 
 
 class Symbol:
@@ -113,7 +116,7 @@ def get_child_keys_separation(ast) -> Dict:
     return ret
 
 
-def fetchcomments(ast: AST, file: List[str], identificator="%-") -> List[str]:
+def fetch_comments(ast: AST, file: List[str], identificator="%-") -> List[str]:
     lines = file.copy()
     lines = lines[:ast.location.begin.line-1]
     lines.reverse()

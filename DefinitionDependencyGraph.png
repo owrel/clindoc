@@ -1,0 +1,36 @@
+digraph G {
+	"sudoku/3" [shape=Mdiamond]
+	subgraph clusterA {
+		node [color=white style=filled]
+		color=lightgrey style=filled
+		"val/1"
+		label=Facts
+	}
+	subgraph clusterB {
+		node [color=white style=filled]
+		color=lightgrey style=filled
+		"instance/3"
+		label=Inputs
+	}
+	subgraph clusterC {
+		node [color=white style=filled]
+		color=lightgrey style=filled
+		"val/1" -> "pos/2"
+		"pos/2" -> "subgrid/3"
+		"val/1" -> "sudoku/3"
+		"pos/2" -> "sudoku/3"
+		"instance/3" -> "sudoku/3"
+		label=Predicate
+	}
+	subgraph clusterD {
+		node [color=white style=filled]
+		color=lightgrey style=filled
+		"sudoku/3" -> "Constraint#3"
+		"subgrid/3" -> "Constraint#3"
+		"sudoku/3" -> "Constraint#2"
+		"sudoku/3" -> "Constraint#1"
+		label=Constraints
+	}
+	label="Definition Dependency Graph"
+	fontsize=20
+}
