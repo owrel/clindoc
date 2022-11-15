@@ -1,23 +1,45 @@
-# SUDOKU
-## Description 
-Sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represetn a value of cell at a given position. The solver will always return a solution if a solution exist
-## Usage 
-```bash 
-clingo sudoku.lp [instance] [-c dim=3] 
-```
-## Example  
- ```prolog
-instance(1,1,1), instance(2,2,2) ...
-    sudoku(1,1,1), sudoku(2,2,2) ...
-```
-## Dependencies 
-None
-## Background 
-https://en.wikipedia.org/wiki/Sudoku
-### Dev 
-https://github.com/...
-##Author(s) 
 
-Potsdam University
-@author Potassco S.
+# Contributor documentation
+## Inputs
+Showing all inputs 
 
+| **Signature** | **Location** | **Doc** |
+|---------------|--------------|---------|
+| instance/3 | Line; 2 | ['-- `instance(X,Y,V)` The cell (`X`, `Y`) has an initial value of `V`'] |
+
+## Facts
+Showing all facts
+
+| **Signature** | **Location** | **Doc** |
+|---------------|--------------|---------|
+| val/1 | Line; 6 | [] |
+
+## Rules
+Showing all rules
+
+| **Signature** | **Depends** | **Location** | **Doc** |
+|---------------|-------------|--------------|---------|
+| pos/2 | val/1 | Line; 7 | [] |
+| subgrid/3 | pos/2 | Line; 10 | [' `subgrid(X,Y,S)` The cell (`X`, `Y`) is in subgrid `S`'] |
+| sudoku/3 | val/1 pos/2 | Line; 13 | [' `sudoku(X,Y,V)` The cell (`X`, `Y`) has value `V` with `0<V<=dim*dim`'] |
+| sudoku/3 | instance/3 | Line; 22 | [] |
+
+## Constraints
+Showing all constraints 
+
+| **Signature** | **Dependencies** | **Location** | **Doc** |
+|---------------|------------------|--------------|---------|
+| constraint#0 | sudoku/3 | Line; 16 | [" Can't repeat values per row"] |
+| constraint#1 | sudoku/3 | Line; 18 | [" Can't repeat values per column"] |
+| constraint#2 | sudoku/3 subgrid/3 | Line; 20 | [" Can't repeat values per subgrid"] |
+
+## Outputs
+Showing all outputs 
+
+| **Signature** | **Location** | **Doc** |
+|---------------|--------------|---------|
+| sudoku/3 | Line; 24 | [] |
+
+
+![Definition Dependency Graph](DefinitionDependencyGraph.png)
+![Rule Dependency Graph](RuleDependencyGraph.png)

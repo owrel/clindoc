@@ -6,10 +6,12 @@ class DefinitionDependencyGraph:
     def __init__(self,astprogram:ASTProgram) -> None:
         self.astprogram = astprogram
         g = graphviz.Digraph('G', filename='DefinitionDependencyGraph',format='png')
-
         for al in self.astprogram.astlines:
             if al.type == ASTLineType.Output:
-                g.node(al.signature,shape='Mdiamond')
+                if al.ast.ast_type == ASTType.ShowTerm:
+                    g.node(f"{al.ast.term.name}/{len(al.ast.term.arguments)}",shape='Mdiamond')
+                else:
+                    g.node(f"{al.ast.name}/{al.ast.arity}",shape='Mdiamond')
 
         with g.subgraph(name='clusterA') as c:
             c.attr(style='filled', color='lightgrey')
@@ -27,9 +29,7 @@ class DefinitionDependencyGraph:
             c.node_attr.update(style='filled', color='white')
             for al in self.astprogram.astlines:
                 if al.type == ASTLineType.Input:
-                    c.node(al.signature)
-                    
-                    
+                    c.node(f"{al.ast.name}/{al.ast.arity}")
             c.attr(label='Inputs')
 
 
@@ -40,12 +40,12 @@ class DefinitionDependencyGraph:
 
             edges = set()
             for al in self.astprogram.astlines:
-                if al.Type == ASTLineType.Rule:
+                if al.type == ASTLineType.Rule:
                     for define in al.define:
                         for depend in al.dependencies:
                             edges.add((depend.signature,define.signature))
             c.edges(edges)
-            c.attr(label='Predicate')
+            c.attr(label='Rules')
 
         with g.subgraph(name='clusterD') as c:
             c.attr(style='filled', color='lightgrey')
@@ -53,15 +53,16 @@ class DefinitionDependencyGraph:
 
             edges = set()
             for al in self.astprogram.astlines:
-                if al.Type  == ASTLineType.Constraint:
+                if al.type == ASTLineType.Constraint:
                     for depend in al.dependencies:
-                        edges.add((depend.signature,al.signature()))
+                        print((depend.signature,f"constraint#{al.id}"))
+                        edges.add((depend.signature,f"constraint#{al.id}"))
 
             c.edges(edges)
             c.attr(label='Constraints')
         g.attr(label='Definition Dependency Graph')
         g.attr(fontsize='20')  
-        g.save('DefinitionDependencyGraph.png')
+        g.render(view=False)
         
         
         

@@ -34,30 +34,26 @@ class UserDoc:
         self._order = ["@title", "@description", "@usage", "@example",
                        "@dependencies", "@background", "@dev", "@author"]
 
-    def parse_documentation(self):
-        # print(self.file)
-        
-
-
-
+    def parse_documentation(self):   
         start = re.search('\%\*', self.file)
         re.purge()
         end = re.search('\*\%', self.file)
-        section = self.file[start.regs[0][1]:end.regs[0][0]]
-        ident = re.findall("@\w+", section.strip())
-
-        for index, d in enumerate(ident):
-            for dcls in self.decorators:
-                if dcls.get_decorator() == d:
-                    if index >= len(ident) - 1:
-                        start = re.search(d, section)
-                        dcls(section[start.regs[0][1]:])
-                    else:
-                        start = re.search(d, section)
-                        end = re.search(ident[index+1], section)
-                        if start and end:
-                            dcls(section[start.regs[0][1]:end.regs[0][0]])
-                            section = section[end.regs[0][0]:]
+        if start and end:
+            section = self.file[start.regs[0][1]:end.regs[0][0]]
+            ident = re.findall("@\w+", section.strip())
+            
+            for index, d in enumerate(ident):
+                for dcls in self.decorators:
+                    if dcls.get_decorator() == d:
+                        if index >= len(ident) - 1:
+                            start = re.search(d, section)
+                            dcls(section[start.regs[0][1]:])
+                        else:
+                            start = re.search(d, section)
+                            end = re.search(ident[index+1], section)
+                            if start and end:
+                                dcls(section[start.regs[0][1]:end.regs[0][0]])
+                                section = section[end.regs[0][0]:]
 
     def init_decorators(self) -> List[Decorator]:
         ret = []

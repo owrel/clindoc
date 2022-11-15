@@ -56,6 +56,7 @@ class SymbolHolder:
             ret += signature + '\n'
             ret += f'\tDepends on: {list(sym.dependencies)}\n'
             ret += f'\tOccurs: {sym._occurs}\n'
+            
 
 
 
@@ -85,9 +86,11 @@ def get_symbolic_atoms(ast: AST) -> Tuple[Set[Symbol], Set[Symbol]]:
             else:
                 if ast.child_keys:
                     for child in ast.child_keys:
-                        new_trace.append(child)
-                        rec_inner_symbolic_atom(eval(f'ast.{child}'), sym,dependencies,new_trace)
-                        new_trace.remove(child)
+                        a = eval(f'ast.{child}')
+                        if a:
+                            new_trace.append(child)
+                            rec_inner_symbolic_atom(a, sym,dependencies,new_trace)
+                            new_trace.remove(child)
             return (sym,dependencies)
     syms, dependencies = rec_inner_symbolic_atom(ast, set(),set(),[])
 
@@ -104,6 +107,7 @@ class ASTProgram:
 
 
         for ast in ast_list:
+            print(ast)
             define,dependencies  = get_symbolic_atoms(ast)
             for sym in define:
                 self.symbol_holer.add(sym)
@@ -160,7 +164,7 @@ class ASTLine:
 
     @property
     def comments(self):
-        return self.comments
+        return self._comments
 
     def factory(ast:AST,define:List[Symbol],dependencies:List[Symbol]):
         if ast.ast_type == ASTType.Rule:
@@ -177,10 +181,10 @@ class ASTLine:
                 return Input(ast,define,dependencies)
             elif ast.ast_type == ASTType.Definition:
                 return Definition(ast,define,dependencies)
-            elif ast.ast_type == ASTType.ShowTerm:
+            elif ast.ast_type == ASTType.ShowSignature or ast.ast_type == ASTType.ShowTerm:
                 return Output(ast,define,dependencies)
             else:
-                print(ast)
+                print(ast, ast.ast_type)
                 print('To be ignore or not implemented yet')
 
 
@@ -191,9 +195,12 @@ class Rule(ASTLine):
         self._type = ASTLineType.Rule
 
 class Constraint(ASTLine):
+    id = 0
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Fact
+        self._type = ASTLineType.Constraint
+        self.id = Constraint.id
+        Constraint.id += 1
 
 class Fact(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
@@ -214,97 +221,18 @@ class Input(ASTLine):
 
 class Output(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
+        print('hello')
         super().__init__(ast, define, dependencies)
         self._type = ASTLineType.Output
+
+    def get_output_signature(self):
+        if self.ast.ast_type == ASTType.ShowTerm:
+            return f"{self.ast.term.name}/{len(self.ast.term.arguments)}"
+        else:
+            return f"{self.ast.name}/{self.ast.arity}"
 
 
 class Constant(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
         self._type = ASTLineType.Constant
-
-
-
-# class Rule:
-#     def __init__(self,ast:AST,define:List[Symbol],dependencies:List[Symbol]) -> None:
-#         self.ast = ast
-#         self.define = define
-#         self.dependencies = dependencies
-#         self.type = 'Rule'
-
-#     def signature(self):
-#         return self._signature
-
-#     def pretty_rule(self):
-#         return f"{self.signature()} | Line; {str(self.ast.location.begin.line)}" 
-
-
-
-
-
-
-# class Constraint(Rule):
-#     id = 1
-#     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
-#         super().__init__(ast, define, dependencies)
-#         self.id = Constraint.id
-#         Constraint.id += 1
-#         self._signature = "Constraint#" + str(self.id)
-#         self.type = 'Constraint'
-
-
-    
-# class Predicate(Rule):
-#     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
-#         super().__init__(ast, define, dependencies)
-#         sign = ''
-#         for d in self.define:
-#             sign += d.signature + ' '
-#         self._signature = sign
-#         self.type = 'Predicate'
-        
-
-
-# class Fact(Rule):
-#     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
-#         super().__init__(ast, define, dependencies)
-#         sign = ''
-#         for d in self.define:
-#             sign += d.signature + ' '
-#         self._signature = sign
-#         self.type = 'Fact'
-
-
-
-# class Definition:
-#     def __init__(self,ast:AST) -> None:
-#         self.ast = ast
-
-#     def factory(ast,symbols):
-        
-
-
-# class Input(Definition):
-#     def __init__(self, ast: AST) -> None:
-#         super().__init__(ast)
-#         self.signature = f"{ast.name}/{ast.arity}"
-#         self.type = 'Input'
-
-
-
-# class Constant(Definition):
-#     def __init__(self, ast: AST) -> None:
-#         super().__init__(ast)
-#         self.type = 'Constant'
-
-
-
-# class Output(Definition):
-#     def __init__(self, ast: AST, dependencies) -> None:
-#         super().__init__(ast)
-#         self.dependencies = dependencies
-#         self.signature = self.ast.term.name + '/' +  str(len(self.ast.term.arguments))
-#         self.type = 'Output'
-
-
-

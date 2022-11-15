@@ -1,0 +1,15 @@
+digraph G {
+	"sudoku/3  | Position (line;22)" -> "constraint#2 | Position (line;20)"
+	"sudoku/3  | Position (line;22)" -> "constraint#0 | Position (line;16)"
+	"val/1  | Position (line;6)" -> "sudoku/3  | Position (line;13)"
+	"val/1  | Position (line;6)" -> "pos/2  | Position (line;7)"
+	"pos/2  | Position (line;7)" -> "sudoku/3  | Position (line;13)"
+	"sudoku/3  | Position (line;13)" -> "constraint#1 | Position (line;18)"
+	"pos/2  | Position (line;7)" -> "subgrid/3  | Position (line;10)"
+	"subgrid/3  | Position (line;10)" -> "constraint#2 | Position (line;20)"
+	"sudoku/3  | Position (line;13)" -> "constraint#2 | Position (line;20)"
+	"sudoku/3  | Position (line;13)" -> "constraint#0 | Position (line;16)"
+	"sudoku/3  | Position (line;22)" -> "constraint#1 | Position (line;18)"
+	label="Rule Dependency Graph"
+	fontsize=20
+}

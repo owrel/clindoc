@@ -19,8 +19,6 @@ subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y).
 %- Can't repeat values per subgrid
 :- sudoku(X,Y,V), sudoku(X',Y',V), subgrid(X,Y,S), subgrid(X',Y',S), (X,Y)!=(X',Y').
 
-%- translation
 sudoku(X,Y,V) :- instance(X,Y,V).
 
 #show sudoku(X,Y,V):sudoku(X,Y,V). 
-% #show val/1.

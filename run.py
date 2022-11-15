@@ -1,4 +1,4 @@
 from clindoc import Clindoc
 c = Clindoc()
-c.load_file('examples/test_astprogram.lp')
+c.load_file('examples/sudoku_without_user_doc.lp')
 
