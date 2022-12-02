@@ -20,7 +20,7 @@ class RuleDependencyGraph:
             return ret
 
         pool = []
-        for a in self.astprogram.astlines:
+        for a in self.astprogram.ast_lines:
             if a.type == ASTLineType.Rule or a.type == ASTLineType.Constraint or a.type == ASTLineType.Fact:
                 pool.append(a) 
         edges = set()

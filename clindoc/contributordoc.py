@@ -137,15 +137,46 @@ class ContributorDoc:
     def build_doc(self) -> str:
         ret = ""
         ref_pool = {}
-        for rule in self.astprogram.astlines:
+        for rule in self.astprogram.ast_lines:
             if rule.type in ref_pool:
                 ref_pool[rule.type].append(rule)
             else:
                 ref_pool[rule.type] = [rule]
-        print(ref_pool)
         mds = MDMaker.factory(ref_pool)
 
         for md in mds:
             ret += md.generate_markdown()
-
         return ret
+
+    def build_doc_section(self) -> str:
+        ret = ""
+        section_keys = set(self.astprogram._section)
+        sections = {}
+        for key in section_keys:
+            sections[key] = []
+
+        for rule in self.astprogram.ast_lines:
+            sections[self.astprogram.get_section(rule)].append(rule)
+
+        for section in sections:
+            if sections[section] and section:
+                ret += f'## Section : {section}'
+                ref_pool = {}
+                for rule in sections[section]:
+                    if rule.type in ref_pool:
+                        ref_pool[rule.type].append(rule)
+                    else:
+                        ref_pool[rule.type] = [rule]
+                mds = MDMaker.factory(ref_pool)
+
+                for md in mds:
+                    ret += md.generate_markdown()
+
+
+        return ret 
+
+            
+        
+
+
+

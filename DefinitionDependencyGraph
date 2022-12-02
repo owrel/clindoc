@@ -16,17 +16,17 @@ digraph G {
 		node [color=white style=filled]
 		color=lightgrey style=filled
 		"pos/2" -> "subgrid/3"
-		"val/1" -> "pos/2"
-		"instance/3" -> "sudoku/3"
-		"val/1" -> "sudoku/3"
 		"pos/2" -> "sudoku/3"
+		"instance/3" -> "sudoku/3"
+		"val/1" -> "pos/2"
+		"val/1" -> "sudoku/3"
 		label=Rules
 	}
 	subgraph clusterD {
 		node [color=white style=filled]
 		color=lightgrey style=filled
-		"sudoku/3" -> "constraint#0"
 		"subgrid/3" -> "constraint#2"
+		"sudoku/3" -> "constraint#0"
 		"sudoku/3" -> "constraint#2"
 		"sudoku/3" -> "constraint#1"
 		label=Constraints

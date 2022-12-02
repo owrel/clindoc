@@ -3,7 +3,7 @@
 @title SUDOKU 
 
 @description 
-    Sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represetn a value of cell at a given position. The solver will always return a solution if a solution exist
+    Sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represent a value of cell at a given position. The solver will always return a solution if a solution exist
 
 @example
     instance(2,3,8). instance(3,3,9). instance(5,4,1). instance(6,4,2). instance(4,4,3). instance(1,4,4). instance(8,4,5). instance(7,4,6). instance(3,4,7). instance(9,4,8). instance(2,4,9). instance(1,5,1). instance(2,5,2). instance(3,5,3). instance(7,5,4). 
@@ -26,16 +26,7 @@
 *%
 
 
-%*
-@input instance(X,Y,V) -> input predicate trepresenting the value of a cell at a given position, "the cell at position (X,Y) has an initial value of V
-@param X ->  x position of the cell
-@param Y ->  y position of the cell
-@param V ->  value of the cell
-*%
 #defined instance/3.
-%*
-@option dim -> The dimension of the sudoku : (dim*dim) x (dim*dim)
-*%
 #const dim = 3.
 val(1..dim*dim).
 pos(X,Y) :- val(X), val(Y).
@@ -53,11 +44,5 @@ subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y).
 sudoku(X,Y,V) :- instance(X,Y,V).
 
 
-%*
-@output sudoku(X,Y,V) -> predicate representing the value of a cell at a given position
-    @param X ->  x position of the cell
-    @param Y ->  y position of the cell
-    @param V ->  value of the cell
-*%
-#show sudoku(X,Y,V): sudoku(X,Y,V). 
+#show sudoku(X,Y,V): sudoku(X,Y,V).
 

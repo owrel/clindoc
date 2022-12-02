@@ -1,3 +1,6 @@
+
+%@section:"Input"
+
 %--- `instance(X,Y,V)` The cell (`X`, `Y`) has an initial value of `V`
 #defined instance/3.
 
@@ -6,12 +9,15 @@
 val(1..dim*dim).
 pos(X,Y) :- val(X), val(Y).
 
-%- `subgrid(X,Y,S)` The cell (`X`, `Y`) is in subgrid `S`
-subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y).
+%@section:"Rules"
+
+subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y). %- `subgrid(X,Y,S)` The cell (`X`, `Y`) is in subgrid `S`
 
 %- `sudoku(X,Y,V)` The cell (`X`, `Y`) has value `V` with `0<V<=dim*dim`
 1 { sudoku(X,Y,V) : val(V) } 1 :- pos(X,Y).
 
+
+%@section:"Constraint"
 %- Can't repeat values per row
 :- sudoku(X,Y,V), sudoku(X',Y,V), X != X'.
 %- Can't repeat values per column

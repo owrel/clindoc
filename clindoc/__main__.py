@@ -2,7 +2,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(
-    description="Clindoc - Gernerate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up")
+    description="Clindoc - Generate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up")
 
 parser.add_argument('file',
                     action='store',
@@ -29,10 +29,15 @@ parser.add_argument('--rule-dependency-graph', '--rdg',
                     action="store_true",
                     help="include rule dependency graph")
 
-parser.add_argument('--rule-dependency-graph', '--rdg',
-                    action="store_true",
-                    help="include rule dependency graph")
-
 parser.add_argument('--definition-dependency-graph', '--ddg',
                     action="store_true",
                     help="include definition dependency graph")
+
+
+parser.add_argument('--section-order', nargs='*')
+
+print(parser.parse_args('hello.txt qw --section-order input'.split()))
+
+
+
+

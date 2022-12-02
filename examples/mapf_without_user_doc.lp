@@ -1,12 +1,13 @@
 #const horizon=1.
 horizon(horizon).
 
+%@section:"Input"
+
 %- Nodes of the graph
 #defined node/2.
 %- Robots of the mapf problem
 #defined robot/1.
-%- Assign the final position to a robot
-#defined final/2.
+#defined final/2. %- Assign the final position to a robot
 
 time(1..H):- horizon(H).
 direction((X,Y)) :- X=-1..1, Y=-1..1, |X+Y|=1.
@@ -19,6 +20,9 @@ position(R,C,T) :- move(R,D,T), position(R,C',T-1),     nextto(C',D,C).
 
 %- it is not possible to move to a NOT neighboring node 
 :- move(R,D,T), position(R,C ,T-1), not nextto(C ,D,_).
+
+
+
 
 %- Check if robot reach its goal
 processed(R,S) :- final(R,C),robot(R), position(R,C,H), horizon(H).

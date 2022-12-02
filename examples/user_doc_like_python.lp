@@ -1,6 +1,6 @@
 %*
 
-Descriprion
+Description
 -----------
 
 A sudoku solver. Takes as input *instance* predicates, it also takes as option *dim* representing the dimension of the sudoku grid. *instance* predicates represetn a value of cell at a given position. The solver will always return a solution if a solution exist.
