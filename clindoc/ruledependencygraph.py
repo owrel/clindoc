@@ -5,7 +5,7 @@ import graphviz
 class RuleDependencyGraph:
     def __init__(self,astprogram:ASTProgram) -> None:
         self.astprogram = astprogram
-        g = graphviz.Digraph('G', filename='RuleDependencyGraph',format='png')
+        g = graphviz.Digraph('G', filename='RuleDependencyGraph',format='svg')
         
         def pretty_display(al:ASTLine) -> str:
             ret = ""
@@ -24,7 +24,8 @@ class RuleDependencyGraph:
             if a.type == ASTLineType.Rule or a.type == ASTLineType.Constraint or a.type == ASTLineType.Fact:
                 pool.append(a) 
         edges = set()
-
+        for n in pool:
+            g.node(pretty_display(n),href=n._location_link)
         for a in pool:
             for b in pool:
                 if a != b:

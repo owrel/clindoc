@@ -81,20 +81,20 @@ class MDMaker:
                 properties = [
                     lambda al: MDHelper.str_symbols_signature(al.define),
                     lambda al: MDHelper.str_symbols_signature(al.dependencies),
-                    lambda al: f"Line; {al.ast.location.begin.line}",
+                    lambda al: f"[Line; {al.ast.location.begin.line}]({al._location_link})",
                     lambda al: al.comments
                 ]
-                ret.append(MDMaker(pool[key], 'Rules', 'Showing all rules', {
+                ret.append(MDMaker(pool[key], '', '', {
                            'column_names': column_name, 'properties': properties}))
 
             elif key == ASTLineType.Fact:
                 column_name = ['Signature',  'Location', 'Doc']
                 properties = [
                     lambda al: MDHelper.str_symbols_signature(al.define),
-                    lambda al: f"Line; {al.ast.location.begin.line}",
+                    lambda al: f"[Line; {al.ast.location.begin.line}]({al._location_link})",
                     lambda al: al.comments
                 ]
-                ret.append(MDMaker(pool[key], 'Facts', 'Showing all facts', {
+                ret.append(MDMaker(pool[key], '', '', {
                            'column_names': column_name, 'properties': properties}))
 
             elif key == ASTLineType.Constraint:
@@ -102,29 +102,29 @@ class MDMaker:
                 properties = [
                     lambda al: f"constraint#{al.id}",
                     lambda al: MDHelper.str_symbols_signature(al.dependencies),
-                    lambda al: f"Line; {al.ast.location.begin.line}",
+                    lambda al: f"[Line; {al.ast.location.begin.line}]({al._location_link})",
                     lambda al: al.comments
                 ]
-                ret.append(MDMaker(pool[key], 'Constraints', 'Showing all constraints ', {
+                ret.append(MDMaker(pool[key], '', '', {
                            'column_names': column_name, 'properties': properties}))
 
             elif key == ASTLineType.Input:
                 column_name = ['Signature',  'Location', 'Doc']
                 properties = [
                     lambda al: f"{al.ast.name}/{al.ast.arity}",
-                    lambda al: f"Line; {al.ast.location.begin.line}",
+                    lambda al: f"[Line; {al.ast.location.begin.line}]({al._location_link})",
                     lambda al: al.comments
                 ]
-                ret.append(MDMaker(pool[key], 'Inputs', 'Showing all inputs ', {
+                ret.append(MDMaker(pool[key], '', '', {
                            'column_names': column_name, 'properties': properties}))
             elif key == ASTLineType.Output:
                 column_name = ['Signature',  'Location', 'Doc']
                 properties = [
                     lambda al: al.get_output_signature(),
-                    lambda al: f"Line; {al.ast.location.begin.line}",
+                    lambda al: f"[Line; {al.ast.location.begin.line}]({al._location_link})",
                     lambda al: al.comments
                 ]
-                ret.append(MDMaker(pool[key], 'Outputs', 'Showing all outputs ', {
+                ret.append(MDMaker(pool[key], '', '', {
                            'column_names': column_name, 'properties': properties}))
 
         return ret

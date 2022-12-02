@@ -8,10 +8,17 @@ def fetch_comments(ast: AST, file: List[str], identificator="%-") -> List[str]:
     lines = lines[:ast.location.begin.line]
     lines.reverse()
     comments = []
-    for line in lines:
+    for idx,line in enumerate(lines):
+        
         if identificator in line:
-            comments.append(line[line.index(identificator)+len(identificator):])
-        elif not line.strip() :
+            if idx == 0:
+                comments.append(line[line.index(identificator)+len(identificator):].strip())
+            if idx >0 and line.strip()[:len(identificator)] == identificator:
+                comments.append(line[line.index(identificator)+len(identificator):].strip())
+            else:
+                break
+        elif line.strip():
+            print(line)
             break
     comments.reverse()
     return comments
@@ -256,9 +263,7 @@ class ASTLine:
                 print('To be ignore or not implemented yet')
 
     def _to_github_link_location(self):
-        print(f'https://github.com/Owrel/clindoc/blob/master/{self.location.begin.filename}#L{self.location.begin.line}')
-        print(self.location)
-        return 'None'
+        return f'https://github.com/Owrel/clindoc/blob/master/{self.location.begin.filename}#L{self.location.begin.line}'
 
 
 class Rule(ASTLine):
