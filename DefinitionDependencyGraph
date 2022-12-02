@@ -15,20 +15,20 @@ digraph G {
 	subgraph clusterC {
 		node [color=white style=filled]
 		color=lightgrey style=filled
-		"val/1" -> "pos/2"
-		"val/1" -> "sudoku/3"
 		"pos/2" -> "sudoku/3"
+		"val/1" -> "pos/2"
 		"instance/3" -> "sudoku/3"
+		"val/1" -> "sudoku/3"
 		"pos/2" -> "subgrid/3"
 		label=Rules
 	}
 	subgraph clusterD {
 		node [color=white style=filled]
 		color=lightgrey style=filled
-		"sudoku/3" -> "constraint#2"
 		"sudoku/3" -> "constraint#0"
-		"subgrid/3" -> "constraint#2"
+		"sudoku/3" -> "constraint#2"
 		"sudoku/3" -> "constraint#1"
+		"subgrid/3" -> "constraint#2"
 		label=Constraints
 	}
 	label="Definition Dependency Graph"

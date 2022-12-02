@@ -51,7 +51,7 @@ class Clindoc:
         md += cd.build_doc_section()
 
         md += f'\n![Definition Dependency Graph](DefinitionDependencyGraph.png)'
-        md += f'\n![Rule Dependency Graph](RuleDependencyGraph.png)'
+        md += f'\n![Rule Dependency Graph](RuleDependencyGraph.svg)'
 
         with open("./out.md", "w") as f:
             f.write(md)

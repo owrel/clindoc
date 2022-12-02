@@ -29,7 +29,7 @@
 </g>
 </g>
 <!-- val/1 &#160;| Position (line;9)&#45;&gt;pos/2 &#160;| Position (line;10) -->
-<g id="edge6" class="edge">
+<g id="edge11" class="edge">
 <title>val/1 &#160;| Position (line;9)&#45;&gt;pos/2 &#160;| Position (line;10)</title>
 <path fill="none" stroke="black" d="M674.6,-246.05C665.28,-237.58 653.82,-227.17 643.53,-217.82"/>
 <polygon fill="black" stroke="black" points="646.11,-215.43 636.36,-211.29 641.4,-220.61 646.11,-215.43"/>
@@ -65,7 +65,7 @@
 <polygon fill="black" stroke="black" points="260.29,-132.94 249.88,-134.88 259.23,-139.86 260.29,-132.94"/>
 </g>
 <!-- pos/2 &#160;| Position (line;10)&#45;&gt;sudoku/3 &#160;| Position (line;17) -->
-<g id="edge1" class="edge">
+<g id="edge4" class="edge">
 <title>pos/2 &#160;| Position (line;10)&#45;&gt;sudoku/3 &#160;| Position (line;17)</title>
 <path fill="none" stroke="black" d="M652.73,-174.41C673.69,-164.88 700.25,-152.81 722.82,-142.55"/>
 <polygon fill="black" stroke="black" points="724.17,-145.78 731.82,-138.46 721.27,-139.41 724.17,-145.78"/>
@@ -95,7 +95,7 @@
 </g>
 </g>
 <!-- sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#0 | Position (line;25) -->
-<g id="edge4" class="edge">
+<g id="edge7" class="edge">
 <title>sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#0 | Position (line;25)</title>
 <path fill="none" stroke="black" d="M785.31,-101.7C792.41,-93.56 801.01,-83.69 808.84,-74.7"/>
 <polygon fill="black" stroke="black" points="811.41,-77.08 815.34,-67.25 806.13,-72.49 811.41,-77.08"/>
@@ -110,13 +110,13 @@
 </g>
 </g>
 <!-- sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#1 | Position (line;28) -->
-<g id="edge11" class="edge">
+<g id="edge6" class="edge">
 <title>sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#1 | Position (line;28)</title>
 <path fill="none" stroke="black" d="M708.86,-103.38C667.51,-92.85 612.73,-78.91 569,-67.78"/>
 <polygon fill="black" stroke="black" points="569.87,-64.39 559.32,-65.31 568.14,-71.17 569.87,-64.39"/>
 </g>
 <!-- sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#2 | Position (line;33) -->
-<g id="edge3" class="edge">
+<g id="edge9" class="edge">
 <title>sudoku/3 &#160;| Position (line;17)&#45;&gt;constraint#2 | Position (line;33)</title>
 <path fill="none" stroke="black" d="M666.93,-107.17C559.82,-94.89 392.52,-75.73 279.52,-62.78"/>
 <polygon fill="black" stroke="black" points="280.26,-59.34 269.93,-61.68 279.46,-66.3 280.26,-59.34"/>
@@ -137,13 +137,13 @@
 <polygon fill="black" stroke="black" points="742.09,-69.66 751.26,-64.34 740.78,-62.78 742.09,-69.66"/>
 </g>
 <!-- sudoku/3 &#160;| Position (line;36)&#45;&gt;constraint#1 | Position (line;28) -->
-<g id="edge9" class="edge">
+<g id="edge1" class="edge">
 <title>sudoku/3 &#160;| Position (line;36)&#45;&gt;constraint#1 | Position (line;28)</title>
 <path fill="none" stroke="black" d="M473.4,-101.7C476.53,-94.15 480.27,-85.12 483.77,-76.68"/>
 <polygon fill="black" stroke="black" points="486.98,-78.08 487.57,-67.5 480.51,-75.4 486.98,-78.08"/>
 </g>
 <!-- sudoku/3 &#160;| Position (line;36)&#45;&gt;constraint#2 | Position (line;33) -->
-<g id="edge7" class="edge">
+<g id="edge3" class="edge">
 <title>sudoku/3 &#160;| Position (line;36)&#45;&gt;constraint#2 | Position (line;33)</title>
 <path fill="none" stroke="black" d="M399.24,-103.72C352.09,-92.97 288.76,-78.53 238.99,-67.19"/>
 <polygon fill="black" stroke="black" points="239.95,-63.81 229.42,-65 238.39,-70.64 239.95,-63.81"/>
