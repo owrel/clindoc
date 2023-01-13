@@ -45,10 +45,10 @@ sudoku
 *It can be any folder, this folder layout is just for the example*
 
 
-We can generate documentation of the folder sudoku with the following command:
+We can generate documentation of the folder sudoku with the following command (from the examples folder of the package *clindoc/examples*):
 
 ```bash
-python -m clindoc path/to/sudoku "Encoding Title: Sudoku"
+python -m clindoc "Encoding Title: Sudoku" ./sudoku/ 
 ```
 
 
