@@ -1,2 +1,10 @@
 __pycache__/*
 __pycache__
+.vscode/
+.vscode
+
+clindoc.egg-info
+clindoc.egg-info/
+
+build
+build/
