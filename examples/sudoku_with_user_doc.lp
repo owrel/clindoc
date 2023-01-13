@@ -8,7 +8,6 @@
 @example
     instance(2,3,8). instance(3,3,9). instance(5,4,1). instance(6,4,2). instance(4,4,3). instance(1,4,4). instance(8,4,5). instance(7,4,6). instance(3,4,7). instance(9,4,8). instance(2,4,9). instance(1,5,1). instance(2,5,2). instance(3,5,3). instance(7,5,4). 
 
-
 @usage
     clingo sudoku.lp [instance] [-c dim=3]
 

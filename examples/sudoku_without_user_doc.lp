@@ -19,8 +19,6 @@ subgrid(X,Y,(((X-1)/dim)*dim+((Y-1)/dim))) :- pos(X,Y). %- `subgrid(X,Y,S)` The 
 %@section:Constraints
 
 
-
-
 %- Can't repeat values per row
 :- sudoku(X,Y,V), sudoku(X',Y,V), X != X'.
 

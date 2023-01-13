@@ -1,43 +1,72 @@
-import argparse
+from .clindoc import Clindoc, Builder
+from .utils import format_parameters
 
+import argparse
+import json
 
 parser = argparse.ArgumentParser(
-    description="Clindoc - Generate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up")
+    prog='clindoc',
+    description="Clindoc - Generate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up", usage='%(prog)s project_name src_dir [options]')
 
-parser.add_argument('file',
-                    action='store',
-                    type=str,
-                    nargs="+",
-                    help='file(s) to generate the documentation from')
+clindoc_cmd_usage = parser.add_argument_group('Global Clindoc parameters')
+
+clindoc_cmd_usage.add_argument('project_name',
+                               help='Name of the project')
+
+clindoc_cmd_usage.add_argument('src_dir',
+                               help='Directory containing the LP files from which to generate the documentation')
+
+clindoc_cmd_usage.add_argument('--description', '--desc',
+                               action="store",
+                               help="Description of the project")
+
+clindoc_cmd_usage.add_argument('--doc-dir', '-d',
+                               action="store",
+                               type=str,
+                               help="The folder where the documentation in rst format will be generated. If not specified, it will default to [src-dir]/docs/source.)")
+
+clindoc_cmd_usage.add_argument('--out-dir', '-b',
+                               action="store",
+                               type=str,
+                               help="Directory where Sphinx will output the generated documentation (if not specified, defaults to [src-dir]/docs/build)")
+
+clindoc_cmd_usage.add_argument('--builder',
+                               action="store",
+                               type=str,
+                               default="html",
+                               help="Sphinx output format parameter (refer to parameter builder sphinx. Can be any builder supported by Sphinx)")
+
+clindoc_cmd_usage.add_argument('--clean',
+                               action="store_true",
+                               help="(flag) remove [doc-dir] and [out-dir] before running. Please be sure that you saved any hand-made modification")
+
+clindoc_cmd_usage.add_argument('--no-sphinx-build',
+                               action="store_true",
+                               help="(flag,debug) skip Sphinx build")
+
+parser.version = Clindoc.version
+
+clindoc_cmd_usage.add_argument('-v',
+                               '--version',
+                               action='version',
+                               help='Print the version and exit')
+
+# Initialize documentation from components
+for cls in Builder.cls_components:
+    cls.cmdline_documentation(parser)
+
+args = parser.parse_args()
+
+if args.doc_dir:
+    raise ValueError(
+        "Not supported yet. A bug in Sphinx makes the documentation generation folder impossible to change (Literal Include directive does not understand absolute path)")
+
+print(json.dumps(format_parameters(vars(args)),indent=4))
 
 
-parser.version = "0.0.1"
-parser.add_argument('-v',
-                    '--version',
-                    action='version',
-                    help='print the version and exit')
 
-# Action tree
-parser.add_argument('--output-type', "-o",
-                    action="store",
-                    default="markdown",
-                    type=str,
-                    help="type format of the output (markdown(=default),html,pdf)")
+c = Clindoc(project_name=args.project_name,
+            src_dir=args.src_dir,
+            parameters = format_parameters(vars(args)))
 
-
-parser.add_argument('--rule-dependency-graph', '--rdg',
-                    action="store_true",
-                    help="include rule dependency graph")
-
-parser.add_argument('--definition-dependency-graph', '--ddg',
-                    action="store_true",
-                    help="include definition dependency graph")
-
-
-parser.add_argument('--section-order', nargs='*')
-
-print(parser.parse_args('hello.txt qw --section-order input'.split()))
-
-
-
-
+c.build_documentation()
