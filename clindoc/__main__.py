@@ -44,6 +44,18 @@ clindoc_cmd_usage.add_argument('--no-sphinx-build',
                                action="store_true",
                                help="(flag,debug) skip Sphinx build")
 
+clindoc_cmd_usage.add_argument('--conf-path',
+                               action="store",
+                               default=None,
+                               help="Path to a configuration file (json format). It can be created from the --dump-conf [path_to_conf] command. Any parameters entered in the command line will be ignored.")
+
+clindoc_cmd_usage.add_argument('--dump-conf',
+                               action="store",
+                               default=None,
+                               help="Path of a file where the configuration will be dumped. The json file will include all of the configuration you've entered in the command line. It can be used later as default configuration using --path-conf [path_to_conf]")
+
+
+
 parser.version = Clindoc.version
 
 clindoc_cmd_usage.add_argument('-v',
@@ -60,9 +72,6 @@ args = parser.parse_args()
 if args.doc_dir:
     raise ValueError(
         "Not supported yet. A bug in Sphinx makes the documentation generation folder impossible to change (Literal Include directive does not understand absolute path)")
-
-print(json.dumps(format_parameters(vars(args)),indent=4))
-
 
 
 c = Clindoc(project_name=args.project_name,

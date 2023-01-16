@@ -41,13 +41,13 @@ class ContributorDocumentation(Component):
             return super()._include_code(astline)
 
     def check_parameters(self):
-        if not self.parameters[self.name].get('group_by'):
+        if not 'group-by' in  self.parameters[self.name]:
             self.parameters[self.name]['group_by'] = 'section'
 
-        if not self.parameters[self.name].get('hide_uncommented'):
+        if not 'hide_uncommented' in self.parameters[self.name]:
             self.parameters[self.name]['hide_uncommented'] = False
         
-        if not self.parameters[self.name].get('hide_code'):
+        if not 'hide_code' in self.parameters[self.name]:
             self.parameters[self.name]['hide_code'] = False
 
     def _factory(self, astline: ASTLine):

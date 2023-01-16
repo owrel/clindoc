@@ -9,8 +9,8 @@ from .utils import create_dir, get_dir_path
 
 import os
 import shutil
-
 import json
+
 
 class Clindoc:
 
@@ -35,26 +35,41 @@ class Clindoc:
         self.parameters = self._check_parameters(parameters)
 
     def _check_parameters(self, parameters: Dict):
+        
+        
+        if 'conf_path' in parameters:
+            if parameters['conf_path']:
+                with open(parameters['conf_path'],'r') as file:
+                    parameters = json.loads(file.read())
+        else:
+            parameters['conf_path'] = None
 
         if not parameters.get('doc_dir'):
             parameters['doc_dir'] = os.path.join(
                 self.src_dir, 'docs', 'source')
 
-        if not parameters.get('out_dir'):
+        if not  parameters.get('out_dir'):
             parameters['out_dir'] = os.path.join(self.src_dir, 'docs', 'build')
 
-        if not parameters.get('builder'):
+        if not 'builder' in  parameters:
             parameters['builder'] = "html"  # Default value
 
-        if not parameters.get('clean'):
+        if not 'clean' in parameters:
             parameters['clean'] = False
         
-        if not parameters.get('no_sphinx_build'):
+        if not 'no_sphinx_build' in parameters:
             parameters['no_sphinx_build'] = False
 
-        if not parameters.get('description'):
+        if not 'description' in parameters:
             parameters['description'] = None
 
+        if not 'conf_path' in parameters:
+            parameters['conf_path'] = None
+            
+        if not 'dump_conf' in parameters:
+            parameters['dump_conf'] = None
+
+    
         return parameters
 
     def _load_folder(self) -> List[ASTProgram]:
@@ -91,8 +106,6 @@ class Clindoc:
         if len(self.astprograms) == 0:
             raise ValueError(f'Empty {self.parameters["src_dir"]} folder')
 
-
-
         if self.parameters['clean']:
             shutil.rmtree(self.parameters['doc_dir'])
             shutil.rmtree(self.parameters['out_dir'])
@@ -103,9 +116,10 @@ class Clindoc:
         self.builder = Builder(self.astprograms, self.parameters)
         self.builder.build()
 
-
-        print(json.dumps(self.parameters,indent=4))
-
+        if self.parameters['dump_conf']:
+            with open(self.parameters['dump_conf'],'w') as file:
+                file.write(json.dumps(self.parameters,indent=4))
+                
 
         self._sphinx_config = {
             "project": self.project_name,

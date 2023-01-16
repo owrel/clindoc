@@ -23,7 +23,7 @@ class DependencyGraph(Component):
         super().__init__(builder,parameters)
         self.parameters = parameters
         # Checking parameters
-        if not parameters[self.name].get('format'):
+        if not 'format' in parameters[self.name]:
             self.parameters[self.name]['format'] = 'svg'
 
 

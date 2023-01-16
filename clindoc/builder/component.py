@@ -68,7 +68,7 @@ class Component(ABC):
             else:
                 name = f"Output: {astline.ast.name}"
         else:
-            print(astline.ast.keys())
+
             if 'name' in astline.ast.keys():
                 name = astline.ast.name
         
@@ -122,7 +122,7 @@ class Index(Component):
     def build_rst_file(self) -> None:
         self.document.title(self.parameters['project_name'])
         self.document.newline()
-        self.document.content('Some introduction')
+        self.document.content(self.parameters['description'])
         self.document.newline(3)
         self.document.h1("Content")
         self.document.newline()
@@ -146,7 +146,7 @@ class Source(Component):
 
     def __init__(self, builder, parameters) -> None:
         super().__init__(builder, parameters)
-        if not self.parameters[self.name].get('exclude_file'):
+        if not 'exclude_file' in self.parameters[self.name]:
             self.parameters[self.name]['exclude_file']
 
 

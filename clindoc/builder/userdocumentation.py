@@ -29,7 +29,6 @@ class UserDocumentation(Component):
         for astprogram in self.builder.astprograms:
             all_tag.update(astprogram._tags)
 
-        print(all_tag)
 
         if all_tag.get('installation'):
             self.document.h2('Installation')
@@ -37,7 +36,6 @@ class UserDocumentation(Component):
             
             for tag in all_tag.get('installation'):
                 self.document.content(tag.description)
-                print(tag.parameters)
                 self.document.newline()
 
                 self.document.directive('code-block',content=tag.parameters[0], arg = tag.parameters[1],indent =2)
