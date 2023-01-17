@@ -82,7 +82,7 @@ class Component(ABC):
 
     def _include_code(self, astline: ASTLine):
         self.document._add(
-            f".. literalinclude:: {astline.location.begin.filename.replace(self.parameters['src_dir']+'/','../../')}")
+            f".. literalinclude:: /{astline.location.begin.filename}")
         self.document._add(f" :language: prolog")
         self.document._add(f" :lines: {self._get_location(astline)}")
 
@@ -94,7 +94,7 @@ class Component(ABC):
 
     def _include_source(self, astprogram: ASTProgram):
         self.document._add(
-            f".. literalinclude:: {astprogram._path.replace(self.parameters['src_dir']+'/','../../')}")
+            f".. literalinclude:: /{astprogram._path}")
         self.document._add(f" :language: prolog")
         self.document._add(f" :linenos:")
 

@@ -56,8 +56,10 @@ class ASTProgram:
             in_double_quote = False
             for c in s:
                 if c == "(":
+                    current_word += c
                     in_parentheses = True
                 elif c == ")":
+                    current_word += c
                     in_parentheses = False
                 elif c == '"':
                     if in_double_quote : in_double_quote= False
@@ -73,14 +75,14 @@ class ASTProgram:
 
         tag_identifier = "@"
         description_identifier = "->"
-        rgx = f" *{tag_identifier} *(?P<tag_name>[a-zA-Z]+) *\((?P<parameters>.*)\) *({description_identifier}(?P<description> *[^\\n]*))?"
+        rgx = f" *{tag_identifier} *(?P<tag_name>[a-zA-Z]+) *\((?P<parameters>.*)\) *({description_identifier} *(?P<description>[^\\n]*))?"
         match = re.search(rgx, line.strip())
 
         if not match:
             return
 
         parameters = _extract_parameters(match['parameters'])
-        tag_name = match['tag_name']
+        tag_name = match['tag_name'].strip()
         description = match['description']
 
         return Tag(tag_name, parameters, description, idx, path)

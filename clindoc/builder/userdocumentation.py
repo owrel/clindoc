@@ -47,6 +47,7 @@ class UserDocumentation(Component):
             self.document.newline()
             
             for tag in all_tag.get('usage'):
+                print(tag.description)
                 self.document.content(tag.description)
                 self.document.newline()
                 self.document.directive('code-block',content=tag.parameters[0],arg = tag.parameters[1],indent=2)

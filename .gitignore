@@ -8,3 +8,9 @@ clindoc.egg-info/
 
 build
 build/
+
+examples/mapf/docs
+examples/sudoku/docs
+
+
+.*/docs

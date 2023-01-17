@@ -30,6 +30,7 @@ class Clindoc:
         # Theses are not in parameters var because these are the parameters that can't have default values and are also the minimal variables required.
         self.project_name = project_name
         self.src_dir = get_dir_path(src_dir)
+        
 
         # Change paths to absolute paths, set default values ...
         self.parameters = self._check_parameters(parameters)
@@ -44,9 +45,12 @@ class Clindoc:
         else:
             parameters['conf_path'] = None
 
+
+        parameters['src_dir'] = get_dir_path(parameters['src_dir'])
+        
         if not parameters.get('doc_dir'):
             parameters['doc_dir'] = os.path.join(
-                self.src_dir, 'docs', 'source')
+                self.src_dir, 'docs', )
 
         if not  parameters.get('out_dir'):
             parameters['out_dir'] = os.path.join(self.src_dir, 'docs', 'build')
@@ -59,9 +63,12 @@ class Clindoc:
         
         if not 'no_sphinx_build' in parameters:
             parameters['no_sphinx_build'] = False
+            
+        if not 'no_rst_build' in parameters:
+            parameters['no_rst_build'] = False
 
         if not 'description' in parameters:
-            parameters['description'] = None
+            parameters['description'] = 'Default description'
 
         if not 'conf_path' in parameters:
             parameters['conf_path'] = None
@@ -107,20 +114,30 @@ class Clindoc:
             raise ValueError(f'Empty {self.parameters["src_dir"]} folder')
 
         if self.parameters['clean']:
-            shutil.rmtree(self.parameters['doc_dir'])
-            shutil.rmtree(self.parameters['out_dir'])
+            if os.path.exists(self.parameters['doc_dir']):
+                shutil.rmtree(self.parameters['doc_dir'])
+                print(self.parameters['doc_dir'], 'cleaned.')
+                
+            if os.path.exists(self.parameters['out_dir']):
+                shutil.rmtree(self.parameters['out_dir'])
+                print(self.parameters['out_dir'], 'cleaned.')
+            
+                
         
         create_dir(self.parameters['doc_dir'])
 
-
         self.builder = Builder(self.astprograms, self.parameters)
-        self.builder.build()
+        
+        if not  self.parameters['no_rst_build']:
+            self.builder.build()
 
         if self.parameters['dump_conf']:
             with open(self.parameters['dump_conf'],'w') as file:
                 file.write(json.dumps(self.parameters,indent=4))
                 
-
+        print(json.dumps(self.parameters,indent=4))
+        
+        
         self._sphinx_config = {
             "project": self.project_name,
             "html_theme": "sphinx_rtd_theme",

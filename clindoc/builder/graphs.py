@@ -30,20 +30,25 @@ class DependencyGraph(Component):
     def build_rst_file(self) -> None:
         # Create folder for graphs
         create_dir(os.path.join(self.parameters['doc_dir'], "img"))
+        print(self.parameters['doc_dir'], "img")
         self._build_rule_dependency_graph()
         self._build_definition_dependency_graph()
 
         self.document.title('Dependency Graphs')
         self.document.newline()
         for astprogram in self.builder.astprograms:
+            self.document.newline()
             self.document.h2(path_from_source(
                 self.parameters['src_dir'], astprogram._path).replace('.lp', ''))
             self.document.newline()
-            self.document.directive('image', os.path.join( "img",
-                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']))
+            self.document.directive('image', '/' + os.path.join( self.parameters['doc_dir'],"img",
+                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']).strip())
             self.document.newline()
-            self.document.directive('image', os.path.join( "img",
-                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']))
+
+            self.document.directive('image', '/'+ os.path.join( self.parameters['doc_dir'],"img",
+                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']).strip())
+            self.document.newline()
+
 
     def _build_rule_dependency_graph(self):
         for astprogram in self.builder.astprograms:
@@ -53,7 +58,7 @@ class DependencyGraph(Component):
                 if a.type == ASTLineType.Rule or a.type == ASTLineType.Constraint or a.type == ASTLineType.Fact:
                     pool.append(a)
 
-            edges = set()
+            edges = set()   
             for a in pool:
                 for b in pool:
                     if a != b:

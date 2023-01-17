@@ -18,12 +18,13 @@ clindoc_cmd_usage.add_argument('src_dir',
 
 clindoc_cmd_usage.add_argument('--description', '--desc',
                                action="store",
+                               default='Default description',
                                help="Description of the project")
 
 clindoc_cmd_usage.add_argument('--doc-dir', '-d',
                                action="store",
                                type=str,
-                               help="The folder where the documentation in rst format will be generated. If not specified, it will default to [src-dir]/docs/source.)")
+                               help="The folder where the documentation in rst format will be generated. If not specified, it will default to [src-dir]/docs/)")
 
 clindoc_cmd_usage.add_argument('--out-dir', '-b',
                                action="store",
@@ -43,6 +44,11 @@ clindoc_cmd_usage.add_argument('--clean',
 clindoc_cmd_usage.add_argument('--no-sphinx-build',
                                action="store_true",
                                help="(flag,debug) skip Sphinx build")
+
+clindoc_cmd_usage.add_argument('--no-rst-build',
+                               action="store_true",
+                               help="(flag,debug) skip rst build section")
+
 
 clindoc_cmd_usage.add_argument('--conf-path',
                                action="store",
@@ -68,10 +74,6 @@ for cls in Builder.cls_components:
     cls.cmdline_documentation(parser)
 
 args = parser.parse_args()
-
-if args.doc_dir:
-    raise ValueError(
-        "Not supported yet. A bug in Sphinx makes the documentation generation folder impossible to change (Literal Include directive does not understand absolute path)")
 
 
 c = Clindoc(project_name=args.project_name,
