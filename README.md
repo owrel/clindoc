@@ -31,6 +31,23 @@ python -m clindoc -h
 Clindoc allows you to create custom documentation by specifying different options.
 
 
+### Basic usage
+
+For example, given a folder structure like:
+
+```
+sudoku
+├── encoding
+│   └── sudoku.lp
+└── input.lp
+```
+
+You can generate documentation for the sudoku folder with the following command (assuming you are in the clindoc/examples/sudoku directory):
+
+```bash
+python -m clindoc 
+```
+
 # Documenting an encoding
 
 ## Directives
@@ -87,7 +104,7 @@ It is also possible to give a definition to a predicate, in other words, what th
 
 it is also possible to comment specific lines in order to add explanation of what a specific line is doing, for instance (issued form the sudoku example):
 
-
+ 
 ```prolog
 %- Can't repeat values per row
 :- sudoku(X,Y,V), sudoku(X'',Y,V), X != X''.
@@ -96,22 +113,7 @@ it is also possible to comment specific lines in order to add explanation of wha
 
 
 
-## Basic usage
 
-For example, given a folder structure like:
-
-```
-sudoku
-├── encoding
-│   └── sudoku.lp
-└── input.lp
-```
-
-You can generate documentation for the sudoku folder with the following command (assuming you are in the clindoc/examples/sudoku directory):
-
-```bash
-python -m clindoc 
-```
 
 ## Options
 
