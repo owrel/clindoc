@@ -14,3 +14,8 @@ examples/sudoku/docs
 
 
 .*/docs
+
+mapf_build
+mapf_docs
+docs
+config.json

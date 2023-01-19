@@ -29,7 +29,18 @@ class Component(ABC):
         self.builder = builder
         self._sio = StringIO()
         self.document = RstCloth(self._sio)
+        
         self.parameters = parameters
+        self.check_parameters()
+    
+    
+    def check_parameters(self):
+        if not self.name in self.parameters: 
+            self.parameters[self.name] = {}
+            
+        if not 'exclude' in self.parameters[self.name]:
+            self.parameters[self.name]['exclude'] = False
+            
 
 
     @abstractmethod
@@ -42,37 +53,10 @@ class Component(ABC):
                 file.write(self._sio.getvalue())
 
     def _get_name(self, astline: ASTLine):
-        prefix = ""
-        name = ""
         if len(self.builder.astprograms) > 1:
-            prefix = astline.location.begin.filename.replace(
-                self.parameters['src_dir'], "")[1:]
-
-            prefix = prefix.replace('/', '.')
-            prefix = prefix.replace('.lp', "")
-            prefix += '.'
-
-        if astline.type == ASTLineType.Fact:
-            name = str(list(astline.define)[0].get_signature())
-        elif astline.type == ASTLineType.Rule:
-            name = str(list(astline.define)[0].get_signature())
-        elif astline.type == ASTLineType.Constraint:
-            name = f"Constraint#{astline.id}"
-        elif astline.type == ASTLineType.Definition:
-            name = f"{astline.ast.name}"
-        elif astline.type == ASTLineType.Input:
-            name = f"{astline.ast.name}/{astline.ast.arity}"
-        elif astline.type == ASTLineType.Output:
-            if  'term' in astline.ast.keys():
-                name = f"Output: {astline.ast.term}"
-            else:
-                name = f"Output: {astline.ast.name}"
-        else:
-
-            if 'name' in astline.ast.keys():
-                name = astline.ast.name
+            return astline.prefix + astline.identifier
         
-        return prefix + name
+        return astline.identifier
 
     def _get_location(self, astline: ASTLine):
         if astline.location.begin.line != astline.location.end.line:
@@ -81,22 +65,32 @@ class Component(ABC):
             return f"{astline.location.begin.line}"
 
     def _include_code(self, astline: ASTLine):
-        self.document._add(
-            f".. literalinclude:: /{astline.location.begin.filename}")
-        self.document._add(f" :language: prolog")
-        self.document._add(f" :lines: {self._get_location(astline)}")
+        
+        self.document.directive('literalinclude', 
+                                arg=f'/{astline.location.begin.filename}',
+                                fields=[('language','prolog'),
+                                        ('lines' , f'{self._get_location(astline)}')])
+        
+        self.document.newline()
 
     def _include_comments(self, astline: ASTLine):
         if astline.comments:
-            self.document.content(f"Comment", indent=1)
             for comment in astline.comments:
-                self.document.content(f"↳ {comment}", indent=2)
+                self.document.directive('note',content=f"↳ {comment}")
+            
+            self.document.newline()
 
     def _include_source(self, astprogram: ASTProgram):
-        self.document._add(
-            f".. literalinclude:: /{astprogram._path}")
-        self.document._add(f" :language: prolog")
-        self.document._add(f" :linenos:")
+        
+        
+        self.document.directive('literalinclude', 
+                                arg=f'/{astprogram._path}',
+                                fields=[('language','prolog'),
+                                        ('linenos' , '')])
+        self.document.newline()
+
+        
+
 
 
 class Index(Component):
@@ -109,6 +103,10 @@ class Index(Component):
 
     def __init__(self, builder, parameters) -> None:
         super().__init__(builder, parameters)
+
+
+    def check_parameters(self):
+        super().check_parameters()
 
     def _generate_toctree(self):
         self.document._add('.. toctree::')
@@ -146,8 +144,11 @@ class Source(Component):
 
     def __init__(self, builder, parameters) -> None:
         super().__init__(builder, parameters)
+        
+    def check_parameters(self):
+        super().check_parameters()
         if not 'exclude_file' in self.parameters[self.name]:
-            self.parameters[self.name]['exclude_file']
+            self.parameters[self.name]['exclude_file']= False
 
 
     def build_rst_file(self) -> None:

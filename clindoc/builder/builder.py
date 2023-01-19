@@ -22,6 +22,17 @@ class Builder:
         self.parameters = parameters
         self.astprograms = astprograms
         self.components = self._initialize_component()
+        self.all_tags = self._unit_tags()
+        
+    def _unit_tags(self)->dict:
+        all_tags = {}
+        for astprogram in self.astprograms:
+            for key in astprogram._tags:
+                if key in all_tags:
+                    all_tags[key] += astprogram._tags[key]
+                else:
+                    all_tags[key] = astprogram._tags[key]
+        return all_tags
     
 
     def _initialize_component(self) -> List[Component]:

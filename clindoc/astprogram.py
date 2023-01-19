@@ -37,16 +37,21 @@ class Tag:
         self.description = description
         self.line_number = line_number
         self.path = path
-
+    
+    def __repr__(self) -> str:
+        return self.name + '_' + self.parameters[0]
+    
 
 class ASTProgram:
-    def __init__(self, ast_list: List[AST], file_lines: List[str], path: str) -> None:
+    def __init__(self, ast_list: List[AST], file_lines: List[str], path: str, parameters) -> None:
         self._file_lines: List[str] = file_lines
         self._path = path
+        self.parameters = parameters
         self._tags = self.fetch_all_tag()
         self.ast_lines, self.external_ast_lines = self._build_ast_lines(ast_list)
         self.symbol_holder = SymbolHolder(ast_list,self._tags)
         self.term_holder = TermHolder(ast_list, self._tags)
+        
 
     def _analyze_line(self, idx: int, line: str, path: str) -> Tag | None:
         def _extract_parameters(s):
@@ -75,12 +80,11 @@ class ASTProgram:
 
         tag_identifier = "@"
         description_identifier = "->"
-        rgx = f" *{tag_identifier} *(?P<tag_name>[a-zA-Z]+) *\((?P<parameters>.*)\) *({description_identifier} *(?P<description>[^\\n]*))?"
+        rgx = f" *{tag_identifier} *(?P<tag_name>[a-zA-Z]+) *\((?P<parameters>[^\-\>]*)\) *({description_identifier} *(?P<description>[^\\n]*))?"
         match = re.search(rgx, line.strip())
-
         if not match:
             return
-
+        
         parameters = _extract_parameters(match['parameters'])
         tag_name = match['tag_name'].strip()
         description = match['description']
@@ -98,7 +102,13 @@ class ASTProgram:
             if not tag.name in ret:
                 ret[tag.name] = [tag]
             else:
-                ret[tag.name].append(tag)
+                for t in ret[tag.name]:
+                    if t.parameters[0] == tag.parameters[0]:
+                        if not t.description and tag.description:
+                            t.description = tag.description
+                        break
+                else:
+                    ret[tag.name].append(tag)
 
         return ret
 
@@ -106,7 +116,7 @@ class ASTProgram:
         line = obj.location.begin.line - 1
         current_section = None
         if self._tags.get('section'):
-            for section in sorted(self._tags['section'],key= lambda x : x.line_number):
+            for section in sorted(self._tags['section'],key= lambda tag : tag.line_number):
                 if section.line_number < line:
                     current_section = section
                 else:
@@ -150,14 +160,22 @@ class ASTProgram:
             syms, dependencies = deep_search_sym_dep(ast, set(), set(), [])
             al = ASTLine.factory(ast, syms, dependencies)
             if al:
-                al._section = self.get_section(al)
+                al.section = self.get_section(al)
                 comments = fetch_comments(al.ast, self._file_lines)
-                al._comments = comments
+                al.comments = comments
                 
                 if al.location.begin.filename == self._path:
                     ast_lines.append(al)
                 else:
                     external_ast_lines.append(al)
+                    
+                prefix = al.location.begin.filename.replace(
+                    self.parameters['src_dir'], "")[1:]
+
+                prefix = prefix.replace('/', '.')
+                prefix = prefix.replace('.lp', "")
+                prefix += '.'
+                al.prefix = prefix
 
         return ast_lines,external_ast_lines
 
@@ -224,7 +242,7 @@ class SymbolHolder:
 class Term:
     def __init__(self, var: Variable, defined_terms: List[Tag] | None = None) -> None:
         self.name = var.name
-        self.location: Set[Location] = [var.location]
+        self.location: Location = var.location
         self.tag = None
         self.definition = None
         if defined_terms:
@@ -275,49 +293,26 @@ class ASTLineType(Enum):
     Rule = 'Rule'
     Constraint = 'Constraint'
     Fact = 'Fact'
-
     Definition = 'Definition'
     Input = 'Input'
     Constant = 'Constant'
     Output = 'Output'
 
-
 class ASTLine:
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
-        self._ast = ast
-        self._define = define
-        self._dependencies = dependencies
-        self._comments = None
-        self._location = ast.location
-        self._section = None
+        self.ast = ast
+        self.define = define
+        self.dependencies = dependencies
+        self.comments = None
+        self.location = ast.location
+        self.section = None
+        self._identifier = None
+        self.prefix = ""
 
     @property
-    def ast(self):
-        return self._ast
+    def identifier(self):
+        return self._identifier
 
-    @property
-    def define(self):
-        return self._define
-
-    @property
-    def dependencies(self):
-        return self._dependencies
-
-    @property
-    def type(self):
-        return self._type
-
-    @property
-    def comments(self):
-        return self._comments
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
-    def section(self):
-        return self._section
 
     def factory(ast: AST, define: List[Symbol], dependencies: List[Symbol]):
         if ast.ast_type == ASTType.Rule:
@@ -344,7 +339,8 @@ class ASTLine:
 class Rule(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Rule
+        self.type = ASTLineType.Rule
+        self._identifier = str(list(self.define)[0].get_signature())
 
 
 class Constraint(ASTLine):
@@ -352,42 +348,42 @@ class Constraint(ASTLine):
 
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Constraint
+        self.type = ASTLineType.Constraint
         self.id = Constraint.id
         Constraint.id += 1
-
+        self._identifier = f"Constraint#{self.id}"
 
 class Fact(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Fact
-
+        self.type = ASTLineType.Fact
+        self._identifier = str(list(self.define)[0].get_signature())
 
 class Definition(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Definition
-
+        self.type = ASTLineType.Definition
+        self._identifier =  f"{self.ast.name}"
 
 class Input(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Input
-
+        self.type = ASTLineType.Input
+        self._identifier = f"{self.ast.name}/{self.ast.arity}"
 
 class Output(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Output
-
-    def get_output_signature(self):
-        if self.ast.ast_type == ASTType.ShowTerm:
-            return f"{self.ast.term.name}/{len(self.ast.term.arguments)}"
+        self.type = ASTLineType.Output
+        if  'term' in self.ast.keys():
+            self._identifier = f"{self.ast.term.name}/{len(self.ast.term.arguments)}"
         else:
-            return f"{self.ast.name}/{self.ast.arity}"
+            self._identifier = f"{self.ast.name}/{len(self.ast.arguments)}"
+
 
 
 class Constant(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)
-        self._type = ASTLineType.Constant
+        self.type = ASTLineType.Constant
+        self._identifier = self.ast.name    

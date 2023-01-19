@@ -34,14 +34,14 @@ class ContributorDocumentation(Component):
 
     def __init__(self, builder, parameters) -> None:
         super().__init__(builder, parameters)
-        self.check_parameters()
 
     def _include_code(self, astline: ASTLine):
         if not self.parameters[self.name]['hide_code']:
             return super()._include_code(astline)
-
+        
     def check_parameters(self):
-        if not 'group-by' in  self.parameters[self.name]:
+        super().check_parameters()
+        if not 'group_by' in  self.parameters[self.name]:
             self.parameters[self.name]['group_by'] = 'section'
 
         if not 'hide_uncommented' in self.parameters[self.name]:
@@ -52,115 +52,37 @@ class ContributorDocumentation(Component):
 
     def _factory(self, astline: ASTLine):
         if self.parameters[self.name]['hide_uncommented'] and not astline.comments:
-            return
+            return False
 
-        if astline.type == ASTLineType.Fact:
-            self._build_fact(astline)
-        elif astline.type == ASTLineType.Rule:
-            self._build_rule(astline)
-        elif astline.type == ASTLineType.Constraint:
-            self._build_constraint(astline)
-        elif astline.type == ASTLineType.Definition:
-            self._build_definition(astline)
-        elif astline.type == ASTLineType.Input:
-            self._build_input(astline)
-        elif astline.type == ASTLineType.Output:
-            self._build_input(astline)
-
-    def _build_input(self, astline) -> None:
-        self.document.h4(f"{self._get_name(astline)}")
-        self.document.newline()
-        self._include_comments(astline)
-        self.document.newline()
-        self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
-        self.document.newline()
-        self._include_code(astline)
-        self.document.newline(2)
-
-    def _build_output(self, astline) -> None:
-        self.document.h4(f"{self._get_name(astline)}")
-        self.document.newline()
-        self._include_comments(astline)
-        self.document.newline()
-        self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
-        self.document.newline()
-        self._include_code(astline)
-        self.document.newline(2)
-
-    def _build_definition(self, astline) -> None:
-        self.document.h4(f"{self._get_name(astline)}")
-        self.document.newline()
-        self._include_comments(astline)
-        self.document.newline()
-        self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
-        self.document.newline()
-        self._include_code(astline)
-        self.document.newline(2)
-
-
-    def _build_fact(self, astline) -> None:
-        self.document.h4(f"{self._get_name(astline)}")
-        self.document.newline()
-        self._include_comments(astline)
-        self.document.newline()
-        self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
-        self.document.newline()
-        self._include_code(astline)
-        self.document.newline(2)
-
-    def _build_constraint(self, astline) -> None:
         self.document.h4(f"{self._get_name(astline)}")
         self.document.newline()
 
-        self.document.content(f"Dependencies:\n", indent=1)
-        self.document.newline()
+        if 'predicate' in self.builder.all_tags:
+            for tag in self.builder.all_tags['predicate']:
 
-        d_done = []
-        for d in astline.dependencies:
-            if d.get_signature() not in d_done:
-                self.document.li(d.get_signature(), indent=1)
-                self.document.newline()
-                d_done.append(d.get_signature())
-
-        self.document.newline()
-
-        self._include_comments(astline)
-
-        self.document.newline()
+                if tag.parameters[0] == astline.identifier:
+                    self.document.content(f'{tag.parameters[1]} -> {tag.description}')
+                    self.document.newline()
+        
+        
+        if astline.dependencies:
+            self.document.h5(f"Dependencies:")
+            d_done = []
+            for d in astline.dependencies:
+                if d.get_signature() not in d_done:
+                    self.document.li(d.get_signature())
+                    d_done.append(d.get_signature())
+            self.document.newline()
+        
         self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
+            f"Location: Line {self._get_location(astline)}")
         self.document.newline()
         self._include_code(astline)
-        self.document.newline(2)
-
-    def _build_rule(self, astline) -> None:
-        self.document.h4(f"{self._get_name(astline)}")
-        self.document.newline()
-
-        self.document.content(f"Dependencies:\n", indent=1)
-        self.document.newline()
-
-        d_done = []
-        for d in astline.dependencies:
-            if d.get_signature() not in d_done:
-                self.document.li(d.get_signature(), indent=1)
-                self.document.newline()
-                d_done.append(d.get_signature())
-
-        self.document.newline()
-
         self._include_comments(astline)
-
         self.document.newline()
-        self.document.content(
-            f"Location: Line {self._get_location(astline)}", indent=1)
-        self.document.newline()
-        self._include_code(astline)
-        self.document.newline(2)
+        return True
+        
+        
 
     def _build_term_table(self):
         self.document.h2('Terms')
@@ -170,8 +92,9 @@ class ContributorDocumentation(Component):
             keys = astprogram.term_holder.keys()
             for key in keys:
                 term = astprogram.term_holder.get(key)[0]
-                if term.definition or not self.parameters[self.name]['hide_uncommented']:
-                    data.append([term.name, term.definition])
+                if term.location.begin.filename == astprogram._path:
+                    if term.definition or not self.parameters[self.name]['hide_uncommented']: 
+                        data.append([term.name, term.definition])
 
         self.document.table(['Term', 'Definition'], data=data)
         self.document.newline()
@@ -185,11 +108,26 @@ class ContributorDocumentation(Component):
         self.document.table_of_contents('Contents', depth=3)
         self.document.newline()
         self._build_term_table()
+        self.document.h2(f'Encoding decomposition')
 
         if self.parameters[self.name]['group_by'] == "type":
-            pass  # TODO
+            self.document.content("*Ordered by type*")
+            self.document.newline()
+            types = {}
+            for astprogram in self.builder.astprograms:
+                for astline in astprogram.ast_lines:
+                        if astline.type not in types:
+                            types[astline.type] = [astline]
+                        else:
+                            types[astline.type].append(astline)
+                            
+            for t in types:
+                self.document.h3(f'Type: {t}')
+                self.document.newline()
+                for astline in types[t]:
+                    self._factory(astline)
+            
         elif self.parameters[self.name]['group_by'] == "section":
-            self.document.h2(f'Encoding decomposition')
             self.document.content("*Ordered by section*")
             self.document.newline()
 
@@ -198,10 +136,12 @@ class ContributorDocumentation(Component):
             for astprogram in self.builder.astprograms:
                 for astline in astprogram.ast_lines:
                     if astline.section != None:
-                        if astline.section not in sections:
-                            sections[astline.section] = [astline]
+                        for key in sections:
+                            if key.parameters[0] == astline.section.parameters[0]:
+                                sections[key] .append(astline)
+                                break
                         else:
-                            sections[astline.section].append(astline)
+                            sections[astline.section] = [astline]
                     else:
                         no_section.append(astline)
 

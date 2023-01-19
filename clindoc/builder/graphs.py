@@ -21,16 +21,18 @@ class DependencyGraph(Component):
 
     def __init__(self, builder,parameters:Dict) -> None:
         super().__init__(builder,parameters)
-        self.parameters = parameters
-        # Checking parameters
-        if not 'format' in parameters[self.name]:
+        
+        
+    def check_parameters(self):
+        super().check_parameters()
+        if not 'format' in self.parameters[self.name]:
             self.parameters[self.name]['format'] = 'svg'
 
 
     def build_rst_file(self) -> None:
         # Create folder for graphs
         create_dir(os.path.join(self.parameters['doc_dir'], "img"))
-        print(self.parameters['doc_dir'], "img")
+
         self._build_rule_dependency_graph()
         self._build_definition_dependency_graph()
 
@@ -54,7 +56,7 @@ class DependencyGraph(Component):
         for astprogram in self.builder.astprograms:
             g = graphviz.Digraph('G', format=self.parameters[self.name]['format'])
             pool = []
-            for a in astprogram.ast_lines:
+            for a in astprogram.ast_lines + astprogram.external_ast_lines:
                 if a.type == ASTLineType.Rule or a.type == ASTLineType.Constraint or a.type == ASTLineType.Fact:
                     pool.append(a)
 
@@ -79,22 +81,25 @@ class DependencyGraph(Component):
     def _build_definition_dependency_graph(self):
         for astprogram in self.builder.astprograms:
             g = graphviz.Digraph('G',format=self.parameters[self.name]['format'])
-            for al in astprogram.ast_lines:
+            edges =set()
+            for al in astprogram.ast_lines + astprogram.external_ast_lines:
                 if al.type == ASTLineType.Output:
-                    if al.ast.ast_type == ASTType.ShowTerm:
-                        g.node(f"{al.ast.term.name}/{len(al.ast.term.arguments)}",shape='Mdiamond')
-                    else:
-                        g.node(f"{al.ast.name}/{al.ast.arity}",shape='Mdiamond')
+                    g.node(f"{al.identifier}",shape='Mdiamond')
+                    for depend in al.dependencies:
+                        edges.add((depend.signature,f"{al.identifier}"))
+                    # edges.add((depend.signature,define.signature))
+                    
 
             with g.subgraph(name='clusterA') as c:
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
 
 
-                for al in astprogram.ast_lines:
+                for al in astprogram.ast_lines+astprogram.external_ast_lines:
                     if al.type == ASTLineType.Fact:
                         for define in al.define:
                             c.node(define.signature)
+                        c.node(al.identifier)
                 c.attr(label='Facts')
 
             with g.subgraph(name='clusterB') as c:
@@ -102,7 +107,7 @@ class DependencyGraph(Component):
                 c.node_attr.update(style='filled', color='white')
                 for al in astprogram.ast_lines:
                     if al.type == ASTLineType.Input:
-                        c.node(f"{al.ast.name}/{al.ast.arity}")
+                        c.node(f"{al.identifier}")
                 c.attr(label='Inputs')
 
 
@@ -111,27 +116,26 @@ class DependencyGraph(Component):
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
 
-                edges = set()
-                for al in astprogram.ast_lines:
+                for al in astprogram.ast_lines +astprogram.external_ast_lines:
                     if al.type == ASTLineType.Rule:
                         for define in al.define:
+                            c.node(define.signature)
                             for depend in al.dependencies:
                                 edges.add((depend.signature,define.signature))
-                c.edges(edges)
+
                 c.attr(label='Rules')
 
             with g.subgraph(name='clusterD') as c:
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
-
-                edges = set()
-                for al in astprogram.ast_lines:
+                for al in astprogram.ast_lines+astprogram.external_ast_lines:
                     if al.type == ASTLineType.Constraint:
                         for depend in al.dependencies:
-                            edges.add((depend.signature,f"constraint#{al.id}"))
+                            c.node(f"{al.identifier}")
+                            edges.add((depend.signature,f"{al.identifier}"))
 
-                c.edges(edges)
                 c.attr(label='Constraints')
+            g.edges(edges)
             g.attr(label='Definition Dependency Graph')
             g.attr(fontsize='20')  
             g.render(filename=os.path.join(self.parameters['doc_dir'], "img", path_from_source(

@@ -6,14 +6,14 @@ import json
 
 parser = argparse.ArgumentParser(
     prog='clindoc',
-    description="Clindoc - Generate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up", usage='%(prog)s project_name src_dir [options]')
+    description="Clindoc - Generate documentation for ASP files", epilog="KRR@UP - https://github.com/krr-up", usage='%(prog)s [options]')
 
 clindoc_cmd_usage = parser.add_argument_group('Global Clindoc parameters')
 
-clindoc_cmd_usage.add_argument('project_name',
+clindoc_cmd_usage.add_argument('--project_name', '-p',
                                help='Name of the project')
 
-clindoc_cmd_usage.add_argument('src_dir',
+clindoc_cmd_usage.add_argument('--src_dir', '-s',
                                help='Directory containing the LP files from which to generate the documentation')
 
 clindoc_cmd_usage.add_argument('--description', '--desc',
@@ -76,8 +76,7 @@ for cls in Builder.cls_components:
 args = parser.parse_args()
 
 
-c = Clindoc(project_name=args.project_name,
-            src_dir=args.src_dir,
+c = Clindoc(
             parameters = format_parameters(vars(args)))
 
 c.build_documentation()
