@@ -210,4 +210,4 @@ The file "test.py" contains examples of different parameters hat can be used.
 
 
 ## Author
-Potsdam University | Potascco Solution
+Potsdam University | Potassco Solutions
