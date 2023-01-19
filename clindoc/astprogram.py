@@ -380,8 +380,6 @@ class Output(ASTLine):
         else:
             self._identifier = f"{self.ast.name}/{len(self.ast.arguments)}"
 
-
-
 class Constant(ASTLine):
     def __init__(self, ast: AST, define: List[Symbol], dependencies: List[Symbol]) -> None:
         super().__init__(ast, define, dependencies)

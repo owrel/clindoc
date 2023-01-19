@@ -1,7 +1,10 @@
 # Clindoc
 Documentation framework for ASP, from user to contributor.
 
+
 # Installation
+
+Requires Python `3.10`
 
 To install Clindoc, you can clone it from the git repository:
 ```bash
@@ -25,7 +28,7 @@ pip install .
 To see all of the available options for Clindoc, you can run:
 
 ```bash
-python -m clindoc -h
+clindoc -h
 ```
 
 Clindoc allows you to create custom documentation by specifying different options.
@@ -45,7 +48,7 @@ sudoku
 You can generate documentation for the sudoku folder with the following command (assuming you are in the clindoc/examples/sudoku directory):
 
 ```bash
-python -m clindoc 
+clindoc 
 ```
 
 # Documenting an encoding
@@ -191,7 +194,7 @@ c.build_documentation()
 The parameters contained in the dict are the same as the options available in the command line. However, the - character must be replaced by _ and . should be replaced by a sub directory. For example, the following command line:
 
 ```bash
-python -m clindoc --contributordoc.hide-code
+clindoc --contributordoc.hide-code
 ```
 
 Will result in python:
