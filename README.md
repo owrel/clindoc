@@ -57,7 +57,7 @@ Directives are special comments, they are identified as such:
 %@directive(param_1,...,param_n)
 ```
 
-or with an optinnal description
+or with an optional description
 
 ```prolog
 %@directive(param_1,...,param_n) -> Description
@@ -74,7 +74,7 @@ Here's the associated regex expression (with named groups):
 
 ### Sections
 
-It is possible to split the encoding by sections, to do so, you can add the directive `section/1`, where it takes as parameter the name of the section   for instance such:
+It is possible to split the encoding by sections, to do so, you can add the directive `section/1`, where it takes as parameter the name of the section. For instance such:
 
 ```prolog
 %@section(Constraints) -> List all of the integrity constraints
@@ -198,7 +198,7 @@ Will result in python:
 
 ```python
 c = Clindoc({'contributordoc' : 
-  {'hide-code' : True}
+  {'hide_code' : True}
 })
 c.build_documentation()
 ```
