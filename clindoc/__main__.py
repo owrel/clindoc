@@ -2,7 +2,6 @@ from .clindoc import Clindoc, Builder
 from .utils import format_parameters
 
 import argparse
-import json
 
 parser = argparse.ArgumentParser(
     prog='clindoc',
@@ -62,7 +61,7 @@ clindoc_cmd_usage.add_argument('--dump-conf',
 
 
 
-parser.version = Clindoc.version
+parser.version = Clindoc.VERSION
 
 clindoc_cmd_usage.add_argument('-v',
                                '--version',

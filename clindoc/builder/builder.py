@@ -1,4 +1,4 @@
-from ..astprogram import ASTProgram
+from ..east import EnrichedAST
 from .component import Component, Index, Source
 from .contributodocumentation import ContributorDocumentation
 from .graphs import DependencyGraph
@@ -16,23 +16,23 @@ class Builder:
         Source
     ]
 
-    def __init__(self, astprograms: List[ASTProgram],
+    def __init__(self, easts: List[EnrichedAST],
                  parameters: Dict) -> None:
 
         self.parameters = parameters
-        self.astprograms = astprograms
+        self.easts = easts
         self.components = self._initialize_component()
-        self.all_tags = self._unit_tags()
+        self.all_directives = self.unit_directives()
         
-    def _unit_tags(self)->dict:
-        all_tags = {}
-        for astprogram in self.astprograms:
-            for key in astprogram._tags:
-                if key in all_tags:
-                    all_tags[key] += astprogram._tags[key]
+    def unit_directives(self)->dict:
+        all_directives = {}
+        for east in self.easts:
+            for key in east.directives:
+                if key in all_directives:
+                    all_directives[key] += east.directives[key]
                 else:
-                    all_tags[key] = astprogram._tags[key]
-        return all_tags
+                    all_directives[key] = east.directives[key]
+        return all_directives
     
 
     def _initialize_component(self) -> List[Component]:
@@ -50,11 +50,7 @@ class Builder:
                 build = False
 
             if build:
-                # try:
-                    c.build_rst_file()
-                    c.write_rst_file()
-                # except Exception as e:
-                #     print(f'Woops, something went wrong while building rst files from component {c.name}')
-                #     print(f'Error: {e}')
-                #     print(f'Trace: {e.with_traceback()}')
+                c.build_rst_file()
+                c.write_rst_file()
+
 
