@@ -4,7 +4,7 @@ from .contributodocumentation import ContributorDocumentation
 from .graphs import DependencyGraph
 from .userdocumentation import UserDocumentation
 from typing import List, Dict
-import traceback
+
 
 
 class Builder:

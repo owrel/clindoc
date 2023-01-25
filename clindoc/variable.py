@@ -1,6 +1,6 @@
 from __future__ import annotations
 from clingo.ast import Location, AST, ASTSequence, ASTType
-from typing import List, Dict
+from typing import List
 
 from .directive import Directive
 

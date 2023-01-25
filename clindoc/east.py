@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import List, Dict, Tuple, Set
-from clingo.ast import AST, ASTSequence, ASTType, SymbolicAtom
+from clingo.ast import AST, ASTSequence, ASTType
 
 # Local import
 from .directive import Directive
 from .symbol import Symbol
 from .variable import Variable
-from .astline import ASTLine, ASTLineType
+from .astline import ASTLine
 
 
 class EnrichedAST:

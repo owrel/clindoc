@@ -4,7 +4,6 @@ from clingo.ast import AST, ASTType
 from typing import List
 
 from .symbol import Symbol
-from .variable import Variable
 
 
 class ASTLineType(Enum):

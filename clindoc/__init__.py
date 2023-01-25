@@ -1,8 +1,8 @@
+import argparse
+
 from .clindoc import Clindoc, Builder
 from .utils import format_parameters
 
-import argparse
-import json
 
 def main():
 
