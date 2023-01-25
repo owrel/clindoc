@@ -1,9 +1,9 @@
 
 # %%
 from clindoc import Clindoc
-# Test 1 - Excluding user documentation
-print("Test 1 - Excluding user documentation")
-c = Clindoc({'src_dir': 'examples/mapf', 'userdoc': {'exclude': True}})
+# Test 1 - Classic
+print("Test 1 - Classic")
+c = Clindoc({'src_dir': 'examples/mapf'})
 c.build_documentation()
 print()
 

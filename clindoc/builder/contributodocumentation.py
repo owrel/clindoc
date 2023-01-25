@@ -1,5 +1,6 @@
+
 from .component import Component
-from ..astprogram import ASTLineType, ASTLine
+from ..east import  ASTLine
 
 from argparse import ArgumentParser
 
@@ -22,7 +23,7 @@ class ContributorDocumentation(Component):
         parser_group.add_argument(
             f'--{cls.name}.hide-uncommented',
             action="store_true",
-            help='(flag) hide non-commented or non-defined term, rules...'
+            help='(flag) hide non-commented or non-defined variable, rules...'
         )
 
         parser_group.add_argument(
@@ -57,11 +58,11 @@ class ContributorDocumentation(Component):
         self.document.h4(f"{self._get_name(astline)}")
         self.document.newline()
 
-        if 'predicate' in self.builder.all_tags:
-            for tag in self.builder.all_tags['predicate']:
+        if 'predicate' in self.builder.all_directives:
+            for directive in self.builder.all_directives['predicate']:
 
-                if tag.parameters[0] == astline.identifier:
-                    self.document.content(f'{tag.parameters[1]} -> {tag.description}')
+                if directive.parameters[0] == astline.identifier:
+                    self.document.content(f'{directive.parameters[1]} -> {directive.description}')
                     self.document.newline()
         
         
@@ -69,9 +70,9 @@ class ContributorDocumentation(Component):
             self.document.h5(f"Dependencies:")
             d_done = []
             for d in astline.dependencies:
-                if d.get_signature() not in d_done:
-                    self.document.li(d.get_signature())
-                    d_done.append(d.get_signature())
+                if d.signature not in d_done:
+                    self.document.li(d.signature)
+                    d_done.append(d.signature)
             self.document.newline()
         
         self.document.content(
@@ -84,19 +85,16 @@ class ContributorDocumentation(Component):
         
         
 
-    def _build_term_table(self):
-        self.document.h2('Terms')
+    def _build_variable_table(self):
+        self.document.h2('Variables')
         self.document.newline()
+        terms = self.builder.all_directives.get('term')
         data = []
-        for astprogram in self.builder.astprograms:
-            keys = astprogram.term_holder.keys()
-            for key in keys:
-                term = astprogram.term_holder.get(key)[0]
-                if term.location.begin.filename == astprogram._path:
-                    if term.definition or not self.parameters[self.name]['hide_uncommented']: 
-                        data.append([term.name, term.definition])
+        if terms:
+            for term in terms:
+                data.append([term.parameters[0],term.description])
 
-        self.document.table(['Term', 'Definition'], data=data)
+        self.document.table(['Variable', 'Definition'], data=data)
         self.document.newline()
 
     def build_rst_file(self):
@@ -107,15 +105,15 @@ class ContributorDocumentation(Component):
         self.document.newline()
         self.document.table_of_contents('Contents', depth=3)
         self.document.newline()
-        self._build_term_table()
+        self._build_variable_table()
         self.document.h2(f'Encoding decomposition')
 
         if self.parameters[self.name]['group_by'] == "type":
             self.document.content("*Ordered by type*")
             self.document.newline()
             types = {}
-            for astprogram in self.builder.astprograms:
-                for astline in astprogram.ast_lines:
+            for east in self.builder.easts:
+                for astline in east.ast_lines:
                         if astline.type not in types:
                             types[astline.type] = [astline]
                         else:
@@ -133,8 +131,8 @@ class ContributorDocumentation(Component):
 
             sections = {}
             no_section = []
-            for astprogram in self.builder.astprograms:
-                for astline in astprogram.ast_lines:
+            for east in self.builder.easts:
+                for astline in east.ast_lines:
                     if astline.section != None:
                         for key in sections:
                             if key.parameters[0] == astline.section.parameters[0]:

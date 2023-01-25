@@ -1,4 +1,4 @@
-from ..astprogram import *
+from ..east import ASTLineType
 from .component import Component, ArgumentParser
 from typing import Dict
 from ..utils import create_dir, path_from_source
@@ -38,25 +38,25 @@ class DependencyGraph(Component):
 
         self.document.title('Dependency Graphs')
         self.document.newline()
-        for astprogram in self.builder.astprograms:
+        for east in self.builder.easts:
             self.document.newline()
             self.document.h2(path_from_source(
-                self.parameters['src_dir'], astprogram._path).replace('.lp', ''))
+                self.parameters['src_dir'], east.path).replace('.lp', ''))
             self.document.newline()
             self.document.directive('image', '/' + os.path.join( self.parameters['doc_dir'],"img",
-                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']).strip())
+                                    path_from_source(self.parameters['src_dir'], east.path).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']).strip())
             self.document.newline()
 
             self.document.directive('image', '/'+ os.path.join( self.parameters['doc_dir'],"img",
-                                    path_from_source(self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']).strip())
+                                    path_from_source(self.parameters['src_dir'], east.path).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']).strip())
             self.document.newline()
 
 
     def _build_rule_dependency_graph(self):
-        for astprogram in self.builder.astprograms:
+        for east in self.builder.easts:
             g = graphviz.Digraph('G', format=self.parameters[self.name]['format'])
             pool = []
-            for a in astprogram.ast_lines + astprogram.external_ast_lines:
+            for a in east.ast_lines + east.external_ast_lines:
                 if a.type == ASTLineType.Rule or a.type == ASTLineType.Constraint or a.type == ASTLineType.Fact:
                     pool.append(a)
 
@@ -75,14 +75,14 @@ class DependencyGraph(Component):
             g.attr(label='Rule Dependency Graph')
             g.attr(fontsize='20')
             g.render(filename=os.path.join(self.parameters['doc_dir'], "img", path_from_source(
-                self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "rdg"), view=False)
+                self.parameters['src_dir'], east.path).replace('.lp', ''), "rdg"), view=False)
 
     
     def _build_definition_dependency_graph(self):
-        for astprogram in self.builder.astprograms:
+        for east in self.builder.easts:
             g = graphviz.Digraph('G',format=self.parameters[self.name]['format'])
             edges =set()
-            for al in astprogram.ast_lines + astprogram.external_ast_lines:
+            for al in east.ast_lines + east.external_ast_lines:
                 if al.type == ASTLineType.Output:
                     g.node(f"{al.identifier}",shape='Mdiamond')
                     for depend in al.dependencies:
@@ -95,7 +95,7 @@ class DependencyGraph(Component):
                 c.node_attr.update(style='filled', color='white')
 
 
-                for al in astprogram.ast_lines+astprogram.external_ast_lines:
+                for al in east.ast_lines+east.external_ast_lines:
                     if al.type == ASTLineType.Fact:
                         for define in al.define:
                             c.node(define.signature)
@@ -105,7 +105,7 @@ class DependencyGraph(Component):
             with g.subgraph(name='clusterB') as c:
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
-                for al in astprogram.ast_lines:
+                for al in east.ast_lines:
                     if al.type == ASTLineType.Input:
                         c.node(f"{al.identifier}")
                 c.attr(label='Inputs')
@@ -116,7 +116,7 @@ class DependencyGraph(Component):
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
 
-                for al in astprogram.ast_lines +astprogram.external_ast_lines:
+                for al in east.ast_lines +east.external_ast_lines:
                     if al.type == ASTLineType.Rule:
                         for define in al.define:
                             c.node(define.signature)
@@ -128,7 +128,7 @@ class DependencyGraph(Component):
             with g.subgraph(name='clusterD') as c:
                 c.attr(style='filled', color='lightgrey')
                 c.node_attr.update(style='filled', color='white')
-                for al in astprogram.ast_lines+astprogram.external_ast_lines:
+                for al in east.ast_lines+east.external_ast_lines:
                     if al.type == ASTLineType.Constraint:
                         for depend in al.dependencies:
                             c.node(f"{al.identifier}")
@@ -139,5 +139,5 @@ class DependencyGraph(Component):
             g.attr(label='Definition Dependency Graph')
             g.attr(fontsize='20')  
             g.render(filename=os.path.join(self.parameters['doc_dir'], "img", path_from_source(
-                self.parameters['src_dir'], astprogram._path).replace('.lp', ''), "ddg"), view=False)
+                self.parameters['src_dir'], east.path).replace('.lp', ''), "ddg"), view=False)
             

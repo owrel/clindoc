@@ -28,45 +28,45 @@ class UserDocumentation(Component):
         self._build_usage()
 
     def _build_usage(self):
-        all_tag = {}
-        for astprogram in self.builder.astprograms:
-            all_tag.update(astprogram._tags)
+        directives= {}
+        for east in self.builder.easts:
+            directives.update(east.directives)
 
 
-        if all_tag.get('installation'):
+        if directives.get('installation'):
             self.document.h2('Installation')
             self.document.newline()
             
-            for tag in all_tag.get('installation'):
-                self.document.content(tag.description)
+            for directive in directives.get('installation'):
+                self.document.content(directive.description)
                 self.document.newline()
 
-                self.document.directive('code-block',content=tag.parameters[0], arg = tag.parameters[1],indent =2)
+                self.document.directive('code-block',content=directive.parameters[0], arg = directive.parameters[1],indent =2)
                 self.document.newline(3 )
 
         
-        if all_tag.get('usage'):
+        if directives.get('usage'):
             self.document.h2('Usage')
             self.document.newline()
             
-            for tag in all_tag.get('usage'):
-                self.document.content(tag.description)
+            for directive in directives.get('usage'):
+                self.document.content(directive.description)
                 self.document.newline()
-                self.document.directive('code-block',content=tag.parameters[0],arg = tag.parameters[1],indent=2)
+                self.document.directive('code-block',content=directive.parameters[0],arg = directive.parameters[1],indent=2)
                 self.document.newline(3)
 
         
 
-        if all_tag.get('example'):
+        if directives.get('example'):
             self.document.newline()
 
             self.document.h2('Example')
             self.document.newline()
             
-            for tag in all_tag.get('example'):
-                self.document.content(tag.description)
+            for directive in directives.get('example'):
+                self.document.content(directive.description)
                 self.document.newline()
-                self.document.directive('code-block',content=tag.parameters[0],arg = tag.parameters[1],indent=2)
+                self.document.directive('code-block',content=directive.parameters[0],arg = directive.parameters[1],indent=2)
 
                 self.document.newline(3)
 
