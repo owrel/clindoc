@@ -1,6 +1,6 @@
 
 from .component import Component
-from ..east import  ASTLine
+from ..astline import  ASTLine
 
 from argparse import ArgumentParser
 

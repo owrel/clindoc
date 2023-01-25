@@ -1,11 +1,13 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from ..east import  ASTLine, EnrichedAST
 from typing import List, Tuple
 from argparse import ArgumentParser
 from rstcloth import RstCloth
 import os
 from io import StringIO
+
+from ..east import EnrichedAST
+from ..astline import ASTLine
 
 
 class Component(ABC):
