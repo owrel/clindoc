@@ -4,7 +4,7 @@ import os
 
 from ..astline import ASTLineType
 from .component import Component, ArgumentParser
-from ..utils import create_dir, path_from_source
+from ..utils import create_dir, filename_from_source
 
 
 
@@ -41,15 +41,15 @@ class DependencyGraph(Component):
         self.document.newline()
         for east in self.builder.easts:
             self.document.newline()
-            self.document.h2(path_from_source(
-                self.parameters['src_dir'], east.path).replace('.lp', ''))
+            self.document.h2(filename_from_source(
+                self.parameters['src_dir'], east.filename).replace('.lp', ''))
             self.document.newline()
             self.document.directive('image', '/' + os.path.join( self.parameters['doc_dir'],"img",
-                                    path_from_source(self.parameters['src_dir'], east.path).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']).strip())
+                                    filename_from_source(self.parameters['src_dir'], east.filename).replace('.lp', ''), "rdg."+ self.parameters[self.name]['format']).strip())
             self.document.newline()
 
             self.document.directive('image', '/'+ os.path.join( self.parameters['doc_dir'],"img",
-                                    path_from_source(self.parameters['src_dir'], east.path).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']).strip())
+                                    filename_from_source(self.parameters['src_dir'], east.filename).replace('.lp', ''), "ddg."+ self.parameters[self.name]['format']).strip())
             self.document.newline()
 
 
@@ -75,8 +75,8 @@ class DependencyGraph(Component):
             g.edges(edges)
             g.attr(label='Rule Dependency Graph')
             g.attr(fontsize='20')
-            g.render(filename=os.path.join(self.parameters['doc_dir'], "img", path_from_source(
-                self.parameters['src_dir'], east.path).replace('.lp', ''), "rdg"), view=False)
+            g.render(filename=os.path.join(self.parameters['doc_dir'], "img", filename_from_source(
+                self.parameters['src_dir'], east.filename).replace('.lp', ''), "rdg"), view=False)
 
     
     def _build_definition_dependency_graph(self):
@@ -139,6 +139,6 @@ class DependencyGraph(Component):
             g.edges(edges)
             g.attr(label='Definition Dependency Graph')
             g.attr(fontsize='20')  
-            g.render(filename=os.path.join(self.parameters['doc_dir'], "img", path_from_source(
-                self.parameters['src_dir'], east.path).replace('.lp', ''), "ddg"), view=False)
+            g.render(filename=os.path.join(self.parameters['doc_dir'], "img", filename_from_source(
+                self.parameters['src_dir'], east.filename).replace('.lp', ''), "ddg"), view=False)
             

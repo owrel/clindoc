@@ -17,5 +17,6 @@ examples/sudoku/docs
 
 mapf_build
 mapf_docs
-docs
+examples/docs
+
 config.json

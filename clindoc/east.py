@@ -1,18 +1,24 @@
 from __future__ import annotations
 from typing import List, Dict, Tuple, Set
-from clingo.ast import AST, ASTSequence, ASTType
+from clingo.ast import AST, ASTSequence, ASTType, Location, Position
 
 # Local import
 from .directive import Directive
 from .symbol import Symbol
 from .variable import Variable
 from .astline import ASTLine
+from .comment import Comment
 
 
 class EnrichedAST:
     """
     The EnrichedAST (east) class provides additional information and functionality for analyzing and working with an Abstract Syntax Tree (AST) generated from a logic program. 
-    This class takes as input a list of AST objects, the lines of the source file as a list of strings, the path to the source file, and some parameters to configure it.
+    This class takes as input a list of AST objects, the lines of the source file as a list of strings, the filename to the source file, and some parameters to configure it.
+    
+    :param ast_list: AST of the encoding as a list
+    :param file: str list representing the file
+    :param filename: location of the file
+    :param parameters: documentation parameters 
     """
 
     COMMENT_IDENTIFIER = "%-"
@@ -20,21 +26,24 @@ class EnrichedAST:
     def __init__(self,
                  ast_list: List[AST],
                  file: List[str],
-                 path: str,
+                 filename: str,
                  parameters: Dict,
                  ) -> None:
 
         self.file = file
-        self.path = path
+        self.filename = filename
         self.parameters = parameters
-        self.directives = EnrichedAST.extract_all_directive(
-            self.file, self.path)
+        
+        self.directives = Directive.extract_directives(
+            self.file, self.filename)
+        
+        self.comments = Comment.extract_comments(file,filename)
 
         self.symbols = Symbol.extract_symbols(
-            ast_list, self.directives.get('predicates'), path)
+            ast_list, self.directives.get('predicates'), filename)
         
         self.variables = Variable.extract_variables(
-            ast_list, self.directives.get('term'), path)
+            ast_list, self.directives.get('var'), filename)
         
         self.ast_lines, self.external_ast_lines = self.build_ast_lines(
             ast_list)
@@ -75,31 +84,7 @@ class EnrichedAST:
         comments.reverse()
         return comments
 
-    @classmethod
-    def extract_all_directive(cls, file: List[str], path: str) -> dict:
-        """
-        Extracts all of the directives from the file, returning a dictionary of lists of the extracted directives, with the keys being the names of the directives. If a directive with the same name and first parameter (correspond to an ID) already exists in the dictionary, the directive's description will be added to the existing directive if it is not already present.
 
-        :return: A dictionary of lists of the extracted directives, with the keys being the names of the directives.
-        """
-        ret = {}
-        for line_number, line in enumerate(file):
-            directive = Directive.from_line(line, line_number, path)
-            if directive == None:
-                continue
-
-            if not directive.name in ret:
-                ret[directive.name] = [directive]
-            else:
-                for t in ret[directive.name]:
-                    if t.parameters[0] == directive.parameters[0]:
-                        if not t.description and directive.description:
-                            t.description = directive.description
-                        break
-                else:
-                    ret[directive.name].append(directive)
-
-        return ret
 
     def get_section(self, obj) -> Directive | None:
         """
@@ -180,7 +165,7 @@ class EnrichedAST:
                                  src_dir=self.parameters['src_dir'])
             
             if al:
-                if al.location.begin.filename == self.path:
+                if al.location.begin.filename == self.filename:
                     ast_lines.append(al)
                 else:
                     external_ast_lines.append(al)

@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from .east import EnrichedAST
 from .builder import Builder
-from .utils import create_dir, get_dir_path
+from .utils import create_dir, get_dir_filename
 from .astline import Constraint
 
 import os
@@ -19,9 +19,6 @@ The generated documentation contains information about the symbols, dependencies
 Additionally, Clindoc allows for the specification of various parameters for the documentation generation process.
 """
 
-
-
-
 class Clindoc:
     """
     Clindoc is a class for generating documentation for clingo programs.
@@ -30,26 +27,27 @@ class Clindoc:
 
     It takes an optional parameters argument which can contain the following fields:
 
-    | Parameter       | Type                                                                                                     | Description                                                                                                                                 |
-    |-----------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-    | src_dir         | (str)                                                                                                    | The directory containing the clingo files. If not provided, it defaults to the current directory.                                           |
-    | doc_dir (str)   | The directory containing the documentation source files. If not provided, it defaults to <src_dir>/docs. |                                                                                                                                             |
-    | out_dir         | (str)                                                                                                    | The directory where the documentation should be built. If not provided, it defaults to <doc_dir>/build.                                     |
-    | project_name    | (str)                                                                                                    | The name of the project. If not provided, it defaults to 'Default Name'.                                                                    |
-    | builder         | (str)                                                                                                    | The builder to use with Sphinx. If not provided, it defaults to 'html'.                                                                     |
-    | clean           | (bool)                                                                                                   | Whether to clean the out_dir before building the documentation. If not provided, it defaults to False.                                      |
-    | no_sphinx_build | (bool)                                                                                                   | Whether to run the Sphinx build command after generating the reStructuredText files. If not provided, it defaults to False.                 |
-    | no_rst_build    | (bool)                                                                                                   | Whether to generate reStructuredText files or not. If not provided, it defaults to False.                                                   |
-    | description     | (str)                                                                                                    | The description of the project. If not provided, it defaults to 'Default description'.                                                      |
-    | conf_path       | (str)                                                                                                    | The path to a JSON configuration file. If provided, the options in the file will overwrite the options provided in the parameters argument. |
-    | dump_conf       | (str)                                                                                                    | If provided, the current configuration will be dumped to the given file in JSON format.                                                     |
+    | Parameter       | Type   | Description                                                                                                                                 |
+    |-----------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------|
+    | src_dir         | (str)  | The directory containing the clingo files. If not provided, it defaults to the current directory.                                           |
+    | doc_dir         | (str)  | The directory containing the documentation source files. If not provided, it defaults to <src_dir>/docs.                                    |                                                                                                         |
+    | out_dir         | (str)  | The directory where the documentation should be built. If not provided, it defaults to <doc_dir>/build.                                     |
+    | project_name    | (str)  | The name of the project. If not provided, it defaults to 'Default Name'.                                                                    |
+    | builder         | (str)  | The builder to use with Sphinx. If not provided, it defaults to 'html'.                                                                     |
+    | clean           | (bool) | Whether to clean the out_dir before building the documentation. If not provided, it defaults to False.                                      |
+    | no_sphinx_build | (bool) | Whether to run the Sphinx build command after generating the reStructuredText files. If not provided, it defaults to False.                 |
+    | no_rst_build    | (bool) | Whether to generate reStructuredText files or not. If not provided, it defaults to False.                                                   |
+    | description     | (str)  | The description of the project. If not provided, it defaults to 'Default description'.                                                      |
+    | conf_filename   | (str)  | The path to a JSON configuration file. If provided, the options in the file will overwrite the options provided in the parameters argument. |
+    | dump_conf       | (str)  | If provided, the current configuration will be dumped to the given file in JSON format.                                                     |
+    
     :param parameters: A dictionary of parameters for the Clindoc object.
     
     """
-    VERSION = "0.2.0"
+    VERSION = "0.3.0"
 
     def __init__(self, parameters: Dict = {}) -> None:
-        # Change paths to absolute paths, set default values ...
+        # Change filenames to absolute filenames, set default values ...
         self.parameters = self.check_parameters(parameters)
 
     @classmethod
@@ -57,44 +55,44 @@ class Clindoc:
         """
         Load all .lp files in the given folder (recursively) and create EnrichedAST objects for each file.
 
-        :param path: The path of the folder to load files from.
+        :param filename: The filename of the folder to load files from.
         :param parameters: A dictionary of parameters for the Clindoc object.
         :return: A list of EnrichedAST objects. 
         """
         ret = []
 
-        path = parameters['src_dir']
-        if not os.path.isdir(path) or not os.path.exists(path):
-            raise ValueError(f"{path} is not a valid directory.")
-        lp_paths = []
-        for root, dirs, files in os.walk(path):
-            lp_paths.extend([os.path.join(root, f)
+        filename = parameters['src_dir']
+        if not os.path.isdir(filename) or not os.path.exists(filename):
+            raise ValueError(f"{filename} is not a valid directory.")
+        lp_filenames = []
+        for root, dirs, files in os.walk(filename):
+            lp_filenames.extend([os.path.join(root, f)
                             for f in files if f.endswith(".lp")])
 
-        for lp_path in lp_paths:
-            ret.append(cls.load_file(lp_path, parameters))
+        for lp_filename in lp_filenames:
+            ret.append(cls.load_file(lp_filename, parameters))
 
         return ret
 
     @classmethod
-    def load_file(cls, path, parameters):
+    def load_file(cls, filename, parameters):
         """
         Load the given file and create an EnrichedAST object for it.
 
-        :param path: The path of the file to load.
+        :param filename: The filename of the file to load.
         :param parameters: A dictionary of parameters for the Clindoc object.
         :return: An EnrichedAST object.
         """
         Constraint.id = 0
         ctl = Control()
-        with open(path) as f:
+        with open(filename) as f:
             file_lines = f.readlines()
 
         ast_list = []
         with ProgramBuilder(ctl) as _:
-            parse_files([path], ast_list.append)
+            parse_files([filename], ast_list.append)
 
-        return EnrichedAST(ast_list, file_lines, path, parameters)
+        return EnrichedAST(ast_list, file_lines, filename, parameters)
 
     
     def check_parameters(self, parameters: Dict):
@@ -104,12 +102,12 @@ class Clindoc:
         :param parameters: A dictionary of parameters for the Clindoc object.
         :return: The adjusted parameters.
         """
-        if 'conf_path' in parameters:
-            if parameters['conf_path']:
-                with open(parameters['conf_path'], 'r') as file:
+        if 'conf_filename' in parameters:
+            if parameters['conf_filename']:
+                with open(parameters['conf_filename'], 'r') as file:
                     parameters = json.loads(file.read())
         else:
-            parameters['conf_path'] = None
+            parameters['conf_filename'] = None
 
         if not parameters.get('src_dir'):
             parameters['src_dir'] = '.'
@@ -117,14 +115,14 @@ class Clindoc:
         if not parameters.get('project_name'):
             parameters['project_name'] = 'Default Name'
 
-        parameters['src_dir'] = get_dir_path(parameters['src_dir'])
+        parameters['src_dir'] = get_dir_filename(parameters['src_dir'])
 
         if not parameters.get('doc_dir'):
             parameters['doc_dir'] = os.path.join(
                 parameters['src_dir'], 'docs')
 
         else:
-            parameters['doc_dir'] = get_dir_path(parameters['doc_dir'])
+            parameters['doc_dir'] = get_dir_filename(parameters['doc_dir'])
 
         if not parameters.get('out_dir'):
             parameters['out_dir'] = os.path.join(
@@ -145,12 +143,12 @@ class Clindoc:
         if not 'description' in parameters:
             parameters['description'] = 'Default description'
 
-        if not 'conf_path' in parameters:
-            parameters['conf_path'] = None
+        if not 'conf_filename' in parameters:
+            parameters['conf_filename'] = None
         else:
-            if parameters['conf_path']:
-                parameters['conf_path'] = os.path.abspath(
-                    parameters['conf_path'])
+            if parameters['conf_filename']:
+                parameters['conf_filename'] = os.path.abspath(
+                    parameters['conf_filename'])
 
         if not 'dump_conf' in parameters:
             parameters['dump_conf'] = None

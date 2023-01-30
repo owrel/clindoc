@@ -1,6 +1,7 @@
 import argparse
 
-from .clindoc import Clindoc, Builder
+from .clindoc import Clindoc
+from .builder import Builder
 from .utils import format_parameters
 
 
@@ -52,7 +53,7 @@ def main():
                                 help="(flag,debug) skip rst build section")
 
 
-    clindoc_cmd_usage.add_argument('--conf-path',
+    clindoc_cmd_usage.add_argument('--conf-filename',
                                 action="store",
                                 default=None,
                                 help="Path to a configuration file (json format). It can be created from the --dump-conf [path_to_conf] command. Any parameters entered in the command line will be ignored.")
@@ -63,8 +64,7 @@ def main():
                                 help="Path of a file where the configuration will be dumped. The json file will include all of the configuration you've entered in the command line. It can be used later as default configuration using --path-conf [path_to_conf]")
 
 
-
-    parser.version = Clindoc.version
+    parser.version = Clindoc.VERSION
 
     clindoc_cmd_usage.add_argument('-v',
                                 '--version',
