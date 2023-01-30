@@ -88,11 +88,11 @@ class ContributorDocumentation(Component):
     def _build_variable_table(self):
         self.document.h2('Variables')
         self.document.newline()
-        terms = self.builder.all_directives.get('term')
+        vars = self.builder.all_directives.get('var')
         data = []
-        if terms:
-            for term in terms:
-                data.append([term.parameters[0],term.description])
+        if vars:
+            for var in vars:
+                data.append([var.parameters[0],var.description])
 
         self.document.table(['Variable', 'Definition'], data=data)
         self.document.newline()

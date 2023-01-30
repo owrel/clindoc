@@ -146,7 +146,7 @@ class Component(ABC):
         :param east: An instance of the EnrichedAST class.
         """
         self.document.directive('literalinclude', 
-                                arg=f'/{east.path}',
+                                arg=f'/{east.filename}',
                                 fields=[('language','prolog'),
                                         ('linenos' , '')])
         self.document.newline()
@@ -219,7 +219,7 @@ class Source(Component):
 
         for east in self.builder.easts:
             self.document.h2(
-                east.path[self.parameters['src_dir'].rindex('/')+1:])
+                east.filename[self.parameters['src_dir'].rindex('/')+1:])
             self.document.newline()
             self._include_source(east)
             self.document.newline()

@@ -85,12 +85,12 @@ It is possible to split the encoding by sections, to do so, you can add the dire
 :- ...
 ```
 
-### Terms
+### Variables
 
-It is possible to give a definition of the variables used for a better understanding of the code, the `term` directive takes as unique parameter a variable (capitalized), for instance
+It is possible to give a definition of the variables used for a better understanding of the code, the `var` directive takes as unique parameter a variable (capitalized), for instance
 
 ```prolog
-%@term(X) -> X refer the the x axis position
+%@var(X) -> X refer the the x axis position
 ```
 
 
@@ -158,7 +158,7 @@ Contributor Documentation parameters:
   --contributordoc.group-by CONTRIBUTORDOC.GROUP_BY
                         How the contributor documentation will group the different elements. "section" or "type"
   --contributordoc.hide-uncommented
-                        (flag) hide non-commented or non-defined term, rules...
+                        (flag) hide non-commented or non-defined var, rules...
   --contributordoc.hide-code
                         (flag) hide source code
 
