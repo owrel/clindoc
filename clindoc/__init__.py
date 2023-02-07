@@ -53,7 +53,7 @@ def main():
                                 help="(flag,debug) skip rst build section")
 
 
-    clindoc_cmd_usage.add_argument('--conf-filename',
+    clindoc_cmd_usage.add_argument('--conf-path',
                                 action="store",
                                 default=None,
                                 help="Path to a configuration file (json format). It can be created from the --dump-conf [path_to_conf] command. Any parameters entered in the command line will be ignored.")

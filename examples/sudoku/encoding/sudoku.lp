@@ -1,5 +1,5 @@
 
-%@predicate(sudoku/3,sudoku(X,Y,V)) -> The cell (`X`, `Y`) has value `V` with `0<V<=dim*dim`
+%@predicate(sudoku/3,sudoku(X,Y,V) ) -> The cell (`X`, `Y`) has value `V` with `0<V<=dim*dim`
 %@var(X) -> collumn index of a cell
 %@var(Y) -> row index of a cell
 

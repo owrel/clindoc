@@ -9,12 +9,7 @@ def get_dir_filename(filename:str) -> str:
 
     :param filename: The filename of the directory.
     :return: The absolute filename of the directory.
-    :raises ValueError: If the filename is not a valid directory or does not exist.
     """
-    if not os.path.exists(filename):
-        raise ValueError(f"{filename} does not exist.")
-    if not os.path.isdir(filename):
-        raise ValueError(f"{filename} is not a directory.")
     
     return os.path.abspath(filename)
 

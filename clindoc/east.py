@@ -50,40 +50,82 @@ class EnrichedAST:
 
         
 
-    @classmethod
-    def get_comments(cls, ast: AST, file: List[str]) -> List[str]:
+    # @classmethod
+    # def get_comments(cls, ast: AST, file: List[str]) -> List[str]:
+    #     """
+    #     Fetches all comments that appear before the given AST node in the file.
+    #     The comments are returned as a list of strings, in the order they appear in the file.
+
+    #     :param ast: The AST node for which to fetch comments.
+    #     :param file: A list of strings representing the lines of the logic program file.
+    #     :return: A list of comments strings.
+    #     """
+    #     lines = file.copy()
+    #     lines = lines[:ast.location.begin.line]
+    #     lines.reverse()
+    #     comments = []
+    #     found = False
+    #     for idx, line in enumerate(lines):
+    #         if not found:
+    #             if cls.COMMENT_IDENTIFIER in line and not found:
+    #                 if idx == 0:
+    #                     comments.append(
+    #                         line[line.index(cls.COMMENT_IDENTIFIER)+len(cls.COMMENT_IDENTIFIER):].strip())
+    #                     found = True
+    #                 if idx > 0 and line.strip()[:len(cls.COMMENT_IDENTIFIER)] == cls.COMMENT_IDENTIFIER:
+    #                     comments.append(
+    #                         line[line.index(cls.COMMENT_IDENTIFIER)+len(cls.COMMENT_IDENTIFIER):].strip())
+    #                     found = True
+    #                 else:
+    #                     break
+    #             elif line.strip() and idx != 0:
+    #                 break
+
+    #     comments.reverse()
+    #     return comments
+    
+    def get_line(self,line:int):
         """
-        Fetches all comments that appear before the given AST node in the file.
-        The comments are returned as a list of strings, in the order they appear in the file.
+        Given a line number, returns every element at this line position
+        
+        :param line: line number where the elements needs to be retrieve
+        :return: A list of element
+        """
+        ret = []
+        all_elem = []
+        all_elem.extend(self.directives)
+        all_elem.extend(self.comments)
+        all_elem.extend(self.variables)
+        all_elem.extend(self.ast_lines)
+        
+        for elem in all_elem:
+            if elem.location.begin.line == line or elem.location.begin.line-1 == line :
+                ret.append(ret)
+                
+        return ret
+    
+    
+
+    def get_comments(self, ast: AST) -> List[Comment]:
+        """
+        Return a list of comments associated to the 
 
         :param ast: The AST node for which to fetch comments.
         :param file: A list of strings representing the lines of the logic program file.
-        :return: A list of comments strings.
+        :return: A list of comments.
         """
-        lines = file.copy()
-        lines = lines[:ast.location.begin.line]
-        lines.reverse()
-        comments = []
-        found = False
-        for idx, line in enumerate(lines):
-            if not found:
-                if cls.COMMENT_IDENTIFIER in line and not found:
-                    if idx == 0:
-                        comments.append(
-                            line[line.index(cls.COMMENT_IDENTIFIER)+len(cls.COMMENT_IDENTIFIER):].strip())
-                        found = True
-                    if idx > 0 and line.strip()[:len(cls.COMMENT_IDENTIFIER)] == cls.COMMENT_IDENTIFIER:
-                        comments.append(
-                            line[line.index(cls.COMMENT_IDENTIFIER)+len(cls.COMMENT_IDENTIFIER):].strip())
-                        found = True
-                    else:
-                        break
-                elif line.strip() and idx != 0:
-                    break
-
-        comments.reverse()
-        return comments
-
+        ret = []
+        line_number = ast.location.begin.line
+        for comment in self.comments:
+            if line_number == comment.location.begin.line:
+                ret.append(comment)
+                        
+        return ret
+                        
+            
+            
+        
+        
 
 
     def get_section(self, obj) -> Directive | None:
@@ -125,6 +167,7 @@ class EnrichedAST:
         :param ast_list: A tuple of lists containing the internal and external AST elements.
         :return: A tuple of lists containing the internal and external AST lines.
         """
+        self.ast_lines = None
         def deep_search_sym_dep(ast: AST, sym: Set, dep: Set, trace: List):
             new_trace = trace.copy()
             if isinstance(ast, ASTSequence):
@@ -161,7 +204,7 @@ class EnrichedAST:
             syms, dependencies = deep_search_sym_dep(ast, set(), set(), [])
             al = ASTLine.factory(ast, syms, dependencies,
                                  section=self.get_section(ast),
-                                 comments=self.get_comments(ast, self.file),
+                                 comments=self.get_comments(ast),
                                  src_dir=self.parameters['src_dir'])
             
             if al:

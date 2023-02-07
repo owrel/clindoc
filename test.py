@@ -77,11 +77,14 @@ print()
 from clindoc import Clindoc
 print("Test 11 - Dumping a configuration file")
 c = Clindoc({'src_dir': 'examples/mapf', 'project_name': 'Mapf Project',
-            'description': 'This is an example project for testing clindoc', 'dump_conf': 'examples/config.json'})
+            'description': 'This is an example project for testing clindoc', 'dump_conf': 'examples/config.json', 'doc_dir' : 'examples/hello', 'out_dir' : 'examples/hello/out'})
 c.build_documentation()
 print()
 
+#%%
 print("Test 10 - Using a configuration file")
 c = Clindoc({'conf_path': 'examples/config.json'})
 c.build_documentation()
 print()
+
+# %%

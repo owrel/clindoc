@@ -6,7 +6,6 @@ from typing import List, Dict
 from .east import EnrichedAST
 from .builder import Builder
 from .utils import create_dir, get_dir_filename
-from .utils import create_dir, get_dir_filename
 from .astline import Constraint
 
 import os
@@ -16,7 +15,7 @@ import json
 """
 Clindoc (CLIngo DOCumentation) is a tool that provides a way to generate documentation from logic programs written in the ASP (Answer Set Programming => Clingo) language. 
 It takes a directory containing .lp files as input and generates an output directory containing the documentation in a specified format (e.g HTML). 
-The generated documentation contains information about the symbols, dependencies, and constraints in the logic programs, as well as any comments or documentation written within the .lp files themselves. 
+The generated documentation contains information about the logic programs that can be generated automatically, as well as any comments or documentation written within the .lp files themselves. 
 Additionally, Clindoc allows for the specification of various parameters for the documentation generation process.
 """
 
@@ -103,13 +102,12 @@ class Clindoc:
         :param parameters: A dictionary of parameters for the Clindoc object.
         :return: The adjusted parameters.
         """
-        if 'conf_filename' in parameters:
-            if parameters['conf_filename']:
-                with open(parameters['conf_filename'], 'r') as file:
+        if 'conf_path' in parameters:
+            if parameters['conf_path']:
+                with open(parameters['conf_path'], 'r') as file:
                     parameters = json.loads(file.read())
         else:
-            parameters['conf_filename'] = None
-
+            parameters['conf_path'] = None
         if not parameters.get('src_dir'):
             parameters['src_dir'] = '.'
 

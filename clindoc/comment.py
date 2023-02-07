@@ -37,3 +37,7 @@ class Comment:
                         comments.append(Comment(location, True, content))
                           
         return comments
+    
+    
+    def __repr__(self) -> str:
+        return self.content

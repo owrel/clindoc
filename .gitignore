@@ -18,5 +18,7 @@ examples/sudoku/docs
 mapf_build
 mapf_docs
 examples/docs
+examples/hello
+
 
 config.json
